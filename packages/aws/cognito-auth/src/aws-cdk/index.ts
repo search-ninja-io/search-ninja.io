@@ -8,31 +8,39 @@ import { Role, PolicyStatement, Effect, FederatedPrincipal } from "@aws-cdk/aws-
 
 import * as path from "path";
 
+//import console = require('console');
+
+import * as dotenv from "dotenv";
+dotenv.config();
+
 export class SearchNinjaAuth {
 
     constructor(stack: Construct, nameSuffix: string, stageName: string) {
 
-        // TODO: Externalize config
         // TODO: Set correct policies for API Gateway
 
-        const region = "us-east-1";
-        const cloudFrontHostedZoneId = "Z2FDTNDATAQYW2";
-        const hostedZoneId = "Z046596619KNOH1A62M10";
-        const hostedZoneName = "search-ninja.io";
-        const certificateArn = "arn:aws:acm:us-east-1:402774754291:certificate/449d81c6-05bb-4a28-a38b-2f69abdbb9da";
-        const domainName = (stageName === "prod" ? "auth.search-ninja.io" : "auth-" + stageName + ".search-ninja.io");
+        const region = process.env.COGNITO_AUTH_REGION || "";
+        const cloudFrontHostedZoneId = process.env.COGNITO_AUTH_CLOUDFRONT_HOSTED_ZONE_ID || "";
+        const hostedZoneId = process.env.HOSTED_ZONE_ID || "";
+        const hostedZoneName = process.env.HOSTED_ZONE_NAME || "";
+        const certificateArn = process.env.CERTIFICATE_ARN || "";
+        const domainName = (stageName === "prod" ?
+            (process.env.COGNITO_AUTH_DOMAIN_NAME_PREFIX || "") + "." + (process.env.DOMAIN_NAME || "") :
+            (process.env.COGNITO_AUTH_DOMAIN_NAME_PREFIX || "") + "-" + stageName + "." + (process.env.DOMAIN_NAME || ""));
 
-        const emailFrom = "Search Ninja <support@search-ninja.io>";
-        const emailReplyTo = "no-reploy@search-ninja.io";
-        const emailSourceArn = "arn:aws:ses:us-east-1:402774754291:identity/support@search-ninja.io";
+        const emailFrom = process.env.COGNITO_AUTH_EMAIL_FROM || "";
+        const emailReplyTo = process.env.COGNITO_AUTH_EMAIL_REPLY_TO || "";
+        const emailSourceArn = process.env.COGNITO_AUTH_EMAIL_SOURCE_ARN || "";
 
-        const userPoolAllowedAuthScopes = ["email", "openid", "profile"];
+        const userPoolAllowedAuthScopes = (process.env.COGNITO_AUTH_USER_POOL_ALLOWED_AUTH_SCOPES || "").split(" ");
 
-        const googleClientId = "337904865128-hq181tkp1ictqeigusk3pmocapi66tqn.apps.googleusercontent.com";
-        const googleClientSecret = "J7OFWP_E3M9ptPJwP6-tu1h8";
-        const googleClientAuthorizeScopes = "email openid profile";
-        const googleCallbackUrls = ["http://localhost:3000/"];
-        const googleLogoutUrls = ["http://localhost:3000/logout"];
+        const googleClientId = process.env.COGNITO_AUTH_GOOGLE_CLIENT_ID || "";
+        const googleClientSecret = process.env.COGNITO_AUTH_GOOGLE_CLIENT_SECRET || "";
+        const googleClientAuthorizeScopes = process.env.COGNITO_AUTH_GOOGLE_CLIENT_AUTHORIZE_SCOPES || "";
+        const googleCallbackUrls = (process.env.COGNITO_AUTH_GOOGLE_CALLBACK_URLS || "").split(" ");
+        const googleLogoutUrls = (process.env.COGNITO_AUTH_GOOGLE_LOGOUT_URLS || "").split(" ");
+
+
 
         const lambdaPath = path.resolve(__dirname, "../lambda");
 
@@ -169,7 +177,7 @@ export class SearchNinjaAuth {
             "DomainDescription.CloudFrontDistribution"
         );
 
-        new ARecord(stack, "UserPoolDomainAliasRecord", {
+        const userPoolDomainAliasRecord = new ARecord(stack, "UserPoolDomainAliasRecord", {
             recordName: cfnUserPoolDomain.domain,
             target: RecordTarget.fromAlias({
                 bind: (_record: any) => ({
@@ -182,6 +190,7 @@ export class SearchNinjaAuth {
                 zoneName: hostedZoneName
             }),
         });
+        userPoolDomainAliasRecord.node.addDependency(cfnUserPoolDomain);
 
         const identityPool = new CfnIdentityPool(stack, "IdentityPool" + nameSuffix, {
             allowUnauthenticatedIdentities: false,
