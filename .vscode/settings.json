@@ -1,0 +1,17 @@
+{
+  "window.zoomLevel": 1,
+  "terminal.integrated.shell.osx": "/bin/zsh",
+  "terminal.integrated.rendererType": "dom",
+  "terminal.integrated.fontFamily": "MesloLGS NF",
+  "editor.detectIndentation": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.wordWrapColumn": 160,
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "files.exclude": {
+    "**/node_modules": true
+  },
+  "workbench.tree.indent": 30
+}

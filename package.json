@@ -1,0 +1,21 @@
+{
+  "name": "@search-ninja/workspace",
+  "private": true,
+  "scripts": {
+    "wipe": "lerna clean && rimraf node_modules",
+    "clean": "lerna run clean",
+    "build": "lerna run build",
+    "watch": "lerna run --parallel watch",
+    "start": "lerna run start --stream --no-prefix --scope @search-ninja-web/frontend",
+    "deploy": "lerna run deploy --scope @search-ninja-aws/cdk-stack",
+    "destroy": "lerna run destroy --scope @search-ninja-aws/cdk-stack"
+  },
+  "devDependencies": {
+    "lerna": "^3.20.2",
+    "rimraf": "^3.0.2"
+  },
+  "workspaces": [
+    "packages/web/**",
+    "packages/aws/**"
+  ]
+}

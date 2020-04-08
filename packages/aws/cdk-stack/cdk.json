@@ -1,0 +1,3 @@
+{
+  "app": "npx ts-node bin/search-ninja-stack.ts"
+}
