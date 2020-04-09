@@ -6,9 +6,6 @@ import { Certificate } from "@aws-cdk/aws-certificatemanager";
 import * as route53 from '@aws-cdk/aws-route53';
 import * as targets from '@aws-cdk/aws-route53-targets';
 
-import * as dotenv from "dotenv";
-dotenv.config();
-
 export interface HttpMethod {
     method: string;
     options?: MethodOptions;
@@ -20,14 +17,14 @@ export class SearchIndexServiceApi {
     public readonly requestModel: IModel;
     public readonly responseModel: IModel;
 
-    constructor(stack: Construct, nameSuffix: string, stageName: string) {
+    constructor(stack: Construct, nameSuffix: string, config: { [name: string]: string }) {
 
-        const hostedZoneId = process.env.HOSTED_ZONE_ID || "";
-        const hostedZoneName = process.env.HOSTED_ZONE_NAME || "";
-        const certificateArn = process.env.CERTIFICATE_ARN || "";
-        const domainName = (stageName === "prod" ?
-            (process.env.API_GATEWAY_DOMAIN_NAME_PREFIX || "") + "." + (process.env.DOMAIN_NAME || "") :
-            (process.env.API_GATEWAY_DOMAIN_NAME_PREFIX || "") + "-" + stageName + "." + (process.env.DOMAIN_NAME || ""));
+        const hostedZoneId = config.HOSTED_ZONE_ID;
+        const hostedZoneName = config.HOSTED_ZONE_NAME;
+        const certificateArn = config.CERTIFICATE_ARN;
+        const domainName = config.API_GATEWAY_DOMAIN_NAME;
+        const stageName = config.STAGE_NAME
+
 
         const certificate = Certificate.fromCertificateArn(stack, "SearchIndexServiceAPICertificate", certificateArn);
 

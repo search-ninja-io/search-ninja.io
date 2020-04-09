@@ -4,10 +4,10 @@ import { SearchNinjaAuth as SearchNinjaAuth } from "@search-ninja-aws/cognito-au
 //import { AzureAdTokenHandlerFunction } from "@search-ninja-aws/lambda-azure-ad-token-handler";
 
 export class SearchNinjaStack extends Stack {
-    constructor(scope: Construct, id: string, nameSuffix: string, props?: StackProps) {
+    constructor(scope: Construct, id: string, nameSuffix: string, config: { [name: string]: string }, props?: StackProps) {
         super(scope, id, props);
 
-        new SearchNinjaAuth(this, nameSuffix, nameSuffix.toLowerCase());
+        new SearchNinjaAuth(this, nameSuffix, config);
 
         //const searchIndexServiceApiStack = new SearchIndexServiceApi(this, nameSuffix, nameSuffix.toLowerCase());
         //new AzureAdTokenHandlerFunction(this, searchIndexServiceApiStack, nameSuffix);

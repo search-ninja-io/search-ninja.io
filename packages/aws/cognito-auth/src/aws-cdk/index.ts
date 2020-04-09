@@ -8,37 +8,30 @@ import { Role, PolicyStatement, Effect, FederatedPrincipal } from "@aws-cdk/aws-
 
 import * as path from "path";
 
-//import console = require('console');
-
-import * as dotenv from "dotenv";
-dotenv.config();
-
 export class SearchNinjaAuth {
 
-    constructor(stack: Construct, nameSuffix: string, stageName: string) {
+    constructor(stack: Construct, nameSuffix: string, config: { [name: string]: string }) {
 
         // TODO: Set correct policies for API Gateway
 
-        const region = process.env.COGNITO_AUTH_REGION || "";
-        const cloudFrontHostedZoneId = process.env.COGNITO_AUTH_CLOUDFRONT_HOSTED_ZONE_ID || "";
-        const hostedZoneId = process.env.HOSTED_ZONE_ID || "";
-        const hostedZoneName = process.env.HOSTED_ZONE_NAME || "";
-        const certificateArn = process.env.CERTIFICATE_ARN || "";
-        const domainName = (stageName === "prod" ?
-            (process.env.COGNITO_AUTH_DOMAIN_NAME_PREFIX || "") + "." + (process.env.DOMAIN_NAME || "") :
-            (process.env.COGNITO_AUTH_DOMAIN_NAME_PREFIX || "") + "-" + stageName + "." + (process.env.DOMAIN_NAME || ""));
+        const region = config.REGION;
+        const cloudFrontHostedZoneId = config.COGNITO_AUTH_CLOUDFRONT_HOSTED_ZONE_ID;
+        const hostedZoneId = config.HOSTED_ZONE_ID;
+        const hostedZoneName = config.HOSTED_ZONE_NAME;
+        const certificateArn = config.CERTIFICATE_ARN;
+        const domainName = config.COGNITO_AUTH_DOMAIN_NAME;
 
-        const emailFrom = process.env.COGNITO_AUTH_EMAIL_FROM || "";
-        const emailReplyTo = process.env.COGNITO_AUTH_EMAIL_REPLY_TO || "";
-        const emailSourceArn = process.env.COGNITO_AUTH_EMAIL_SOURCE_ARN || "";
+        const emailFrom = config.COGNITO_AUTH_EMAIL_FROM;
+        const emailReplyTo = config.COGNITO_AUTH_EMAIL_REPLY_TO;
+        const emailSourceArn = config.COGNITO_AUTH_EMAIL_SOURCE_ARN;
 
-        const userPoolAllowedAuthScopes = (process.env.COGNITO_AUTH_USER_POOL_ALLOWED_AUTH_SCOPES || "").split(" ");
+        const userPoolAllowedAuthScopes = (config.COGNITO_AUTH_USER_POOL_ALLOWED_AUTH_SCOPES).split(" ");
 
-        const googleClientId = process.env.COGNITO_AUTH_GOOGLE_CLIENT_ID || "";
-        const googleClientSecret = process.env.COGNITO_AUTH_GOOGLE_CLIENT_SECRET || "";
-        const googleClientAuthorizeScopes = process.env.COGNITO_AUTH_GOOGLE_CLIENT_AUTHORIZE_SCOPES || "";
-        const googleCallbackUrls = (process.env.COGNITO_AUTH_GOOGLE_CALLBACK_URLS || "").split(" ");
-        const googleLogoutUrls = (process.env.COGNITO_AUTH_GOOGLE_LOGOUT_URLS || "").split(" ");
+        const googleClientId = config.COGNITO_AUTH_GOOGLE_CLIENT_ID;
+        const googleClientSecret = config.COGNITO_AUTH_GOOGLE_CLIENT_SECRET;
+        const googleClientAuthorizeScopes = config.COGNITO_AUTH_GOOGLE_CLIENT_AUTHORIZE_SCOPES;
+        const googleCallbackUrls = (config.COGNITO_AUTH_GOOGLE_CALLBACK_URLS).split(" ");
+        const googleLogoutUrls = (config.COGNITO_AUTH_GOOGLE_LOGOUT_URLS).split(" ");
 
 
 
