@@ -3,7 +3,9 @@ import * as loadedConfig from "!val-loader!./ConfigLoader";
 
 export interface IConfig {
     Cognito: {
+        Region: string;
         UserPoolId: string;
+        IdentityPoolId: string;
         ClientId: string;
     };
 }

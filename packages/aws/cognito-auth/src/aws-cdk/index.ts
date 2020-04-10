@@ -129,6 +129,7 @@ export class SearchNinjaAuth {
             allowedOAuthFlowsUserPoolClient: true,
             allowedOAuthFlows: ["code"],
             allowedOAuthScopes: userPoolAllowedAuthScopes,
+            preventUserExistenceErrors: "ENABLED",
             generateSecret: false,
             refreshTokenValidity: 1,
             callbackUrLs: googleCallbackUrls,

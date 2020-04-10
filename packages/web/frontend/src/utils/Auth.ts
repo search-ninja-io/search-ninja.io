@@ -1,5 +1,5 @@
 import { CognitoUser, AuthenticationDetails, CognitoUserAttribute, ICognitoUserAttributeData, CognitoUserPool, ISignUpResult } from "amazon-cognito-identity-js";
-
+import * as AWS from "aws-sdk/global";
 import { config } from "./Config";
 
 const cognitoUserPool = new CognitoUserPool({
@@ -64,7 +64,17 @@ export const login = async (username: string, password: string) => {
         user.authenticateUser(authDetails, {
             onFailure: err => reject(err),
             onSuccess: async () => await getSession()
-                .then(session => resolve(session))
+                .then(session => {
+                    AWS.config.region = config.Cognito.Region;
+                    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                        IdentityPoolId: config.Cognito.IdentityPoolId,
+                        Logins: {
+                            ["cognito-idp." + config.Cognito.Region + ".amazonaws.com/" + config.Cognito.UserPoolId]: session.cognitoSession.getIdToken().getJwtToken()
+                        }
+                    });
+                    (AWS.config.credentials as AWS.CognitoIdentityCredentials).refresh(err =>
+                        (err ? reject(err) : resolve(session)));
+                })
                 .catch(err => reject(err))
         });
     });
