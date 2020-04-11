@@ -3,9 +3,10 @@ import { useStateValue, LogoutStateAction } from "../State";
 import { changePassword } from "../../utils/Auth";
 import { Form, Button } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
+import { MessageBannerProps } from "../banner/MessageBanner";
 
 interface ChangePasswordProps {
-    setError: React.Dispatch<React.SetStateAction<Error | undefined>>;
+    setMessage: React.Dispatch<React.SetStateAction<MessageBannerProps>>;
 }
 
 export const ChangePassword = (props: ChangePasswordProps) => {
@@ -23,14 +24,23 @@ export const ChangePassword = (props: ChangePasswordProps) => {
         }
 
         if (newPassword !== confirmNewPassword) {
-            props.setError(new Error("New Password and Confirm Password are not the same."));
+            props.setMessage({ errors: [new Error("New Password and Confirm Password are not the same.")] });
+            return;
         }
 
         changePassword(session, password, newPassword)
-            .then(() => dispatch(LogoutStateAction()))
-            .catch(err => props.setError(err));
+            .then(() => {
+                props.setMessage({ successes: ["Successfully changed password."] });
+                setPassword("");
+                setNewPassword("");
+                setConfirmNewPassword("");
+                dispatch(LogoutStateAction());
+            })
+            .catch(err => props.setMessage({ errors: [err] }));
 
     };
+
+    console.log("ChangePassword.render", password, newPassword, confirmNewPassword);
 
     return (
         <>

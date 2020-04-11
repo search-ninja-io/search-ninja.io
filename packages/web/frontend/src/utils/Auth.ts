@@ -1,4 +1,4 @@
-import { CognitoUser, AuthenticationDetails, CognitoUserAttribute, ICognitoUserAttributeData, CognitoUserPool, ISignUpResult } from "amazon-cognito-identity-js";
+import { CognitoUser, AuthenticationDetails, CognitoUserAttribute, CognitoUserPool, ISignUpResult } from "amazon-cognito-identity-js";
 import * as AWS from "aws-sdk/global";
 import { config } from "./Config";
 
@@ -56,13 +56,130 @@ export const getSession = async () => {
     });
 };
 
-export const login = async (username: string, password: string) => {
-    return await new Promise<Session>((resolve, reject) => {
+export interface MfaResult {
+    session: Session;
+}
+
+export const sendSoftwareToken = async (user: CognitoUser, softwareToken: string) => {
+    return await new Promise<MfaResult>((resolve, reject) => {
+        user.sendMFACode(softwareToken, {
+            onFailure: err => reject(err),
+            onSuccess: async () => {
+                await getSession()
+                    .then(session => {
+                        AWS.config.region = config.Cognito.Region;
+                        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                            IdentityPoolId: config.Cognito.IdentityPoolId,
+                            Logins: {
+                                ["cognito-idp." + config.Cognito.Region + ".amazonaws.com/" + config.Cognito.UserPoolId]: session.cognitoSession.getIdToken().getJwtToken()
+                            }
+                        });
+                        (AWS.config.credentials as AWS.CognitoIdentityCredentials).refresh(err =>
+                            (err ? reject(err) : resolve({ session: session })));
+                    })
+                    .catch(err => reject(err))
+            }
+        }, "SOFTWARE_TOKEN_MFA");
+    });
+};
+
+
+export const associateSoftwareToken = async () => {
+    return await new Promise<string>((resolve, reject) => {
+        getSession()
+            .then(session => {
+                session.user.associateSoftwareToken({
+                    onFailure: err => reject(err),
+                    associateSecretCode: secret => resolve("otpauth://totp/Search%20Ninja:" + session.userAttributes["email"] + "?secret=" + secret + "&issuer=Search%20Ninja")
+                });
+            })
+            .catch(err => reject(err))
+    });
+};
+
+export const verifySoftwareToken = async (totpVerificationCode: string, deviceName: string) => {
+    return await new Promise<void>((resolve, reject) => {
+        getSession()
+            .then(session => {
+                session.user.verifySoftwareToken(totpVerificationCode, deviceName, {
+                    onFailure: err => reject(err),
+                    onSuccess: cognitoUserSession => {
+                        const softwareTokenMfaSettings = { Enabled: true, PreferredMfa: true };
+                        session.user.setUserMfaPreference(null, softwareTokenMfaSettings, (err, data) => {
+                            if (err) reject(err);
+                            else {
+                                const attributes = [{ Name: "custom:mfa", Value: deviceName }];
+                                session.user.updateAttributes(attributes, (err, data) => {
+                                    if (err) reject(err);
+                                    else resolve();
+                                })
+                            }
+                        });
+                    }
+                });
+            })
+            .catch(err => reject(err))
+    });
+}
+
+export const getMfaDevice = async () => {
+    return await new Promise<string>((resolve, reject) => {
+        getSession()
+            .then(session => {
+                const mfaDevice = session.userAttributes["custom:mfa"];
+                resolve(mfaDevice);
+            })
+            .catch(err => reject(err))
+    });
+}
+
+export const disableMfaDevice = async () => {
+    return await new Promise<string>((resolve, reject) => {
+        getSession()
+            .then(session => {
+                const softwareTokenMfaSettings = { Enabled: false, PreferredMfa: false };
+                session.user.setUserMfaPreference(null, softwareTokenMfaSettings, (err, data) => {
+                    if (err) reject(err);
+                    else {
+                        const attributes = [{ Name: "custom:mfa", Value: "" }];
+                        session.user.updateAttributes(attributes, (err, data) => {
+                            if (err) reject(err);
+                            else resolve();
+                        })
+                    }
+                });
+
+            })
+            .catch(err => reject(err))
+    });
+}
+
+
+export interface LoginResultBase {
+    readonly type: "LoginResult" | "LoginResultTotpRequired";
+}
+
+export interface LoginResult extends LoginResultBase {
+    readonly type: "LoginResult";
+    session: Session;
+}
+
+export interface LoginResultTotpRequired extends LoginResultBase {
+    readonly type: "LoginResultTotpRequired";
+    user: CognitoUser;
+    device: string;
+}
+
+export const login = async (username: string, password: string, rememberDevice: boolean) => {
+    return await new Promise<LoginResult | LoginResultTotpRequired>((resolve, reject) => {
         const user = new CognitoUser({ Username: username, Pool: cognitoUserPool });
         const authDetails = new AuthenticationDetails({ Username: username, Password: password });
 
         user.authenticateUser(authDetails, {
             onFailure: err => reject(err),
+            totpRequired: async (challengeName: any, challengeParameters: any) => {
+                resolve({ type: "LoginResultTotpRequired", user: user, device: challengeParameters.FRIENDLY_DEVICE_NAME })
+            },
             onSuccess: async () => await getSession()
                 .then(session => {
                     AWS.config.region = config.Cognito.Region;
@@ -73,11 +190,36 @@ export const login = async (username: string, password: string) => {
                         }
                     });
                     (AWS.config.credentials as AWS.CognitoIdentityCredentials).refresh(err =>
-                        (err ? reject(err) : resolve(session)));
+                        (err ? reject(err) : resolve({ type: "LoginResult", session: session })));
                 })
-                .catch(err => reject(err))
+                .catch(err => reject(err)),
+
+
+
+            newPasswordRequired: (userAttributes: any, requiredAttributes: any) => {
+                console.log("Auth.login.newPasswordRequired", userAttributes, requiredAttributes);
+                reject("newPasswordRequired --> Not Yet Implemented");
+            },
+            mfaRequired: (challengeName: any, challengeParameters: any) => {
+                console.log("Auth.login.mfaRequired", challengeName, challengeParameters);
+                reject("mfaRequired --> Not Yet Implemented");
+            },
+            customChallenge: (challengeParameters: any) => {
+                console.log("Auth.login.customChallenge", challengeParameters);
+                reject("customChallenge --> Not Yet Implemented");
+            },
+            mfaSetup: (challengeName: any, challengeParameters: any) => {
+                console.log("Auth.login.mfaSetup", challengeName, challengeParameters);
+                reject("mfaSetup --> Not Yet Implemented");
+            },
+            selectMFAType: (challengeName: any, challengeParameters: any) => {
+                console.log("Auth.login.selectMFAType", challengeName, challengeParameters);
+                reject("selectMFAType --> Not Yet Implemented");
+            },
+
+
         });
-    });
+    })
 };
 
 export const logout = async () => {
@@ -122,17 +264,6 @@ export const forgotPasswordConfirm = async (email: string, code: string, newPass
         user.confirmPassword(code, newPassword, {
             onSuccess: () => resolve(),
             onFailure: err => reject(err)
-        });
-    });
-};
-
-export const changeEmail = async (session: Session, newEmail: string, password: string) => {
-    return await new Promise<void>((resolve, reject) => {
-        const { user } = session;
-        const data: ICognitoUserAttributeData[] = [{ Name: "email", Value: newEmail }];
-        user.updateAttributes(data, (err?: Error, result?: string) => {
-            if (err) reject(err);
-            else resolve();
         });
     });
 };

@@ -1,23 +1,26 @@
 import React, { useState } from "react";
 
 import { ChangePassword } from "./ChangePassword";
-import { ChangeEmail } from "./ChangeEmail";
 import { Mfa } from "./Mfa";
 
 import styled from 'styled-components';
-import ErrorBanner from '../banner/ErrorBanner';
+import { MessageBanner, MessageBannerProps } from '../banner/MessageBanner';
 import { Container, Jumbotron, Row, Tab, Col, Nav } from "react-bootstrap";
 
 const Styled = styled.div`
 `;
 
 export const Settings = () => {
-    const [error, setError] = useState<Error>();
+    const [message, setMessage] = useState<MessageBannerProps>({});
+
+    const clearMessage = () => {
+        setMessage({});
+    }
 
     return (
         <Styled>
 
-            {error ? <ErrorBanner errors={[error]} /> : <></>}
+            {message.successes || message.warnings || message.errors ? <MessageBanner {...message} /> : <></>}
 
             <Container className="d-flex mt-5 justify-content-center">
 
@@ -32,26 +35,20 @@ export const Settings = () => {
                                 <Col sm={3}>
                                     <Nav variant="pills" className="flex-column">
                                         <Nav.Item>
-                                            <Nav.Link eventKey="change-password">Change Password</Nav.Link>
+                                            <Nav.Link onClick={clearMessage} eventKey="change-password">Change Password</Nav.Link>
                                         </Nav.Item>
                                         <Nav.Item>
-                                            <Nav.Link eventKey="change-email">Change Email</Nav.Link>
-                                        </Nav.Item>
-                                        <Nav.Item>
-                                            <Nav.Link eventKey="mfa">MFA</Nav.Link>
+                                            <Nav.Link onClick={clearMessage} eventKey="mfa">Multi Factor Authentication</Nav.Link>
                                         </Nav.Item>
                                     </Nav>
                                 </Col>
                                 <Col sm={9}>
                                     <Tab.Content>
                                         <Tab.Pane eventKey="change-password">
-                                            <ChangePassword setError={setError} />
-                                        </Tab.Pane>
-                                        <Tab.Pane eventKey="change-email">
-                                            <ChangeEmail setError={setError} />
+                                            <ChangePassword setMessage={setMessage} />
                                         </Tab.Pane>
                                         <Tab.Pane eventKey="mfa">
-                                            <Mfa setError={setError} />
+                                            <Mfa setMessage={setMessage} />
                                         </Tab.Pane>
                                     </Tab.Content>
                                 </Col>

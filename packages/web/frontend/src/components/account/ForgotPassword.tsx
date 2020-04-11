@@ -4,7 +4,7 @@ import { useStateValue, LogoutStateAction } from "../State";
 import styled from 'styled-components';
 import { Form, Button, Jumbotron, Container } from "react-bootstrap";
 
-import { ErrorBanner } from "../../components/banner/ErrorBanner";
+import { MessageBanner } from "../banner/MessageBanner";
 
 import { forgotPasswordCodeRequest, forgotPasswordConfirm } from "../../utils/Auth";
 import { Redirect } from "react-router-dom";
@@ -52,7 +52,7 @@ export const ForgotPassword = () => {
 
         <Styled>
 
-            {error ? <ErrorBanner errors={[error]} /> : <></>}
+            {error ? <MessageBanner errors={[error]} /> : <></>}
 
             <Container className="d-flex mt-5 justify-content-center">
 

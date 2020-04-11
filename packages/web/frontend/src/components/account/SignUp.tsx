@@ -3,7 +3,7 @@ import { signup } from '../../utils/Auth';
 import { Container, Jumbotron, Form, Button } from 'react-bootstrap';
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components';
-import ErrorBanner from '../banner/ErrorBanner';
+import MessageBanner from '../banner/MessageBanner';
 
 const Styled = styled.div`
 `;
@@ -32,7 +32,7 @@ export const SignUp = () => {
 
         <Styled>
 
-            {error ? <ErrorBanner errors={[error]} /> : <></>}
+            {error ? <MessageBanner errors={[error]} /> : <></>}
 
             <Container className="d-flex mt-5 justify-content-center">
 

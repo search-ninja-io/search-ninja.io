@@ -21,6 +21,7 @@ import { NotFound } from './components/NotFound';
 const App = () => {
 
     const reducer = (prevState: State, action: StateAction) => {
+        console.log("App.reducer", action);
         switch (action.type) {
             case 'Login':
                 return {

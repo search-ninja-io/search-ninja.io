@@ -3,7 +3,7 @@ import { useStateValue, LogoutStateAction } from '../State';
 import { logout } from '../../utils/Auth';
 import { Redirect } from 'react-router-dom';
 
-import { ErrorBanner } from "../banner/ErrorBanner";
+import { MessageBanner } from "../banner/MessageBanner";
 
 export const Logout = () => {
 
@@ -25,7 +25,7 @@ export const Logout = () => {
 
     return (
         <>
-            {error ? <ErrorBanner errors={[error]} /> : <></>}
+            {error ? <MessageBanner errors={[error]} /> : <></>}
             <h1>Logout in progress</h1>
         </>
     );
