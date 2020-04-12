@@ -1,22 +1,22 @@
 {
-  "name": "@search-ninja-aws/api-gateway",
-  "version": "1.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "license": "MIT",
-  "scripts": {
-    "clean": "rimraf dist",
-    "build": "tsc",
-    "watch": "tsc -w"
-  },
-  "devDependencies": {
-    "@aws-cdk/aws-apigateway": "^1.31.0",
-    "@aws-cdk/aws-certificatemanager": "^1.32.0",
-    "@aws-cdk/aws-lambda": "^1.31.0",
-    "@aws-cdk/aws-route53": "^1.31.0",
-    "@aws-cdk/aws-route53-targets": "^1.31.0",
-    "@aws-cdk/core": "^1.31.0",
-    "typescript": "^3.8.3"
-  },
-  "dependencies": {}
+    "name": "@search-ninja-aws/api-gateway",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "license": "MIT",
+    "scripts": {
+        "clean": "rimraf dist",
+        "build": "tsc",
+        "lint": "eslint . --ext .ts,.tsx",
+        "watch": "tsc -w"
+    },
+    "devDependencies": {
+        "@aws-cdk/aws-apigateway": "^1.32.0",
+        "@aws-cdk/aws-certificatemanager": "^1.32.0",
+        "@aws-cdk/aws-lambda": "^1.32.0",
+        "@aws-cdk/aws-route53": "^1.32.0",
+        "@aws-cdk/aws-route53-targets": "^1.32.0",
+        "typescript": "^3.8.3"
+    },
+    "dependencies": {}
 }

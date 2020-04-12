@@ -1,20 +1,20 @@
 {
-  "extends": "../../../tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "dist",
+    "extends": "../../../tsconfig.base.json",
+    "compilerOptions": {
+        "outDir": "dist",
 
-    "target": "es2018",
-    "module": "commonjs",
-    "lib": ["es2018"],
+        "target": "es2018",
+        "module": "commonjs",
+        "lib": ["es2018"],
 
-    "skipLibCheck": true
+        "skipLibCheck": true
 
-    // DIFFERENT - USE DEFUALT: "strictPropertyInitialization": false,
-    // DIFFERENT - USE DEFUALT: "noUnusedLocals": false,
-    // DIFFERENT - USE DEFUALT: "noUnusedParameters": false,
-    // DIFFERENT - USE DEFUALT: "noFallthroughCasesInSwitch": false,
-  },
-  "exclude": ["cdk.out", "dist", "node_modules"]
+        // DIFFERENT - USE DEFUALT: "strictPropertyInitialization": false,
+        // DIFFERENT - USE DEFUALT: "noUnusedLocals": false,
+        // DIFFERENT - USE DEFUALT: "noUnusedParameters": false,
+        // DIFFERENT - USE DEFUALT: "noFallthroughCasesInSwitch": false,
+    },
+    "exclude": ["cdk.out", "dist", "node_modules"]
 }
 
 /** Original tsconf.json 

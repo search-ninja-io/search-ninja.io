@@ -1,19 +1,20 @@
 {
-  "name": "@search-ninja-aws/lambda-azure-ad-token-handler",
-  "version": "1.0.0",
-  "main": "dist/aws-cdk/index.js",
-  "types": "dist/aws-cdk/index.d.ts",
-  "license": "MIT",
-  "scripts": {
-    "clean": "rimraf dist",
-    "build": "tsc",
-    "watch": "tsc -w"
-  },
-  "devDependencies": {
-    "@aws-cdk/aws-apigateway": "^1.31.0",
-    "@aws-cdk/aws-lambda": "^1.31.0",
-    "@aws-cdk/core": "^1.31.0",
-    "@search-ninja-aws/api-gateway": "^1.0.0",
-    "typescript": "^3.8.3"
-  }
+    "name": "@search-ninja-aws/lambda-azure-ad-token-handler",
+    "version": "1.0.0",
+    "main": "dist/aws-cdk/index.js",
+    "types": "dist/aws-cdk/index.d.ts",
+    "license": "MIT",
+    "scripts": {
+        "clean": "rimraf dist",
+        "build": "tsc",
+        "lint": "eslint . --ext .ts,.tsx",
+        "watch": "tsc -w"
+    },
+    "devDependencies": {
+        "@aws-cdk/aws-apigateway": "^1.32.0",
+        "@aws-cdk/aws-lambda": "^1.32.0",
+        "@aws-cdk/core": "^1.32.0",
+        "@search-ninja-aws/api-gateway": "^1.0.0",
+        "typescript": "^3.8.3"
+    }
 }

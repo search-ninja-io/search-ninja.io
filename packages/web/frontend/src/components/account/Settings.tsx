@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-
+import { Col, Container, Jumbotron, Nav, Row, Tab } from 'react-bootstrap';
 import styled from 'styled-components';
-import { Container, Jumbotron, Row, Tab, Col, Nav } from 'react-bootstrap';
+import { MessageBanner, MessageBannerProps } from '../banner/MessageBanner';
 import { ChangePassword } from './ChangePassword';
 import { Mfa } from './Mfa';
-
-import { MessageBanner, MessageBannerProps } from '../banner/MessageBanner';
 
 const Styled = styled.div``;
 

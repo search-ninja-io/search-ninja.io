@@ -1,58 +1,57 @@
-import React, { useState } from "react";
-import { useStateValue, LogoutStateAction } from "../State";
-import { changePassword } from "../../utils/Auth";
-import { Form, Button } from "react-bootstrap";
-import { Redirect } from "react-router-dom";
-import { MessageBannerProps } from "../banner/MessageBanner";
+import React, { useState } from 'react';
+import { useStateValue, LogoutStateAction } from '../State';
+import { changePassword } from '../../utils/Auth';
+import { Form, Button } from 'react-bootstrap';
+import { MessageBannerProps } from '../banner/MessageBanner';
 
 interface ChangePasswordProps {
     setMessage: React.Dispatch<React.SetStateAction<MessageBannerProps>>;
 }
 
-export const ChangePassword = (props: ChangePasswordProps) => {
-    const [password, setPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmNewPassword, setConfirmNewPassword] = useState("");
+export const ChangePassword = (props: ChangePasswordProps): JSX.Element => {
+    const [password, setPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
     const [{ session }, dispatch] = useStateValue();
 
-    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
 
         if (!session) {
-            return (<Redirect to="/login" />);
+            // FIXME: Does not work, fix it!
+            // return <Redirect to="/login" />;
+            return;
         }
 
         if (newPassword !== confirmNewPassword) {
-            props.setMessage({ errors: [new Error("New Password and Confirm Password are not the same.")] });
+            props.setMessage({ errors: [new Error('New Password and Confirm Password are not the same.')] });
             return;
         }
 
         changePassword(session, password, newPassword)
             .then(() => {
-                props.setMessage({ successes: ["Successfully changed password."] });
-                setPassword("");
-                setNewPassword("");
-                setConfirmNewPassword("");
+                props.setMessage({ successes: ['Successfully changed password.'] });
+                setPassword('');
+                setNewPassword('');
+                setConfirmNewPassword('');
                 dispatch(LogoutStateAction());
             })
-            .catch(err => props.setMessage({ errors: [err] }));
-
+            .catch((err) => props.setMessage({ errors: [err] }));
     };
 
-    console.log("ChangePassword.render", password, newPassword, confirmNewPassword);
+    console.log('ChangePassword.render', password, newPassword, confirmNewPassword);
 
     return (
         <>
             <Form onSubmit={onSubmit}>
-
                 <Form.Control
                     readOnly
-                    style={{ display: " none" }}
+                    style={{ display: ' none' }}
                     type="text"
                     name="username"
                     autoComplete="username email"
-                    value={(session ? session.userAttributes["email"] : "")}
+                    value={session ? session.userAttributes['email'] : ''}
                 />
 
                 <Form.Group controlId="formChangePasswordCurrentPassword">
@@ -62,7 +61,9 @@ export const ChangePassword = (props: ChangePasswordProps) => {
                         type="password"
                         autoComplete="current-password"
                         placeholder="Enter current password"
-                        onChange={(event: React.FormEvent<HTMLInputElement>) => setPassword(event.currentTarget.value)}
+                        onChange={(event: React.FormEvent<HTMLInputElement>): void =>
+                            setPassword(event.currentTarget.value)
+                        }
                     />
                 </Form.Group>
 
@@ -73,7 +74,9 @@ export const ChangePassword = (props: ChangePasswordProps) => {
                         type="password"
                         autoComplete=""
                         placeholder="Enter new password"
-                        onChange={(event: React.FormEvent<HTMLInputElement>) => setNewPassword(event.currentTarget.value)}
+                        onChange={(event: React.FormEvent<HTMLInputElement>): void =>
+                            setNewPassword(event.currentTarget.value)
+                        }
                     />
                 </Form.Group>
 
@@ -84,16 +87,18 @@ export const ChangePassword = (props: ChangePasswordProps) => {
                         type="password"
                         autoComplete=""
                         placeholder="Confirm new password"
-                        onChange={(event: React.FormEvent<HTMLInputElement>) => setConfirmNewPassword(event.currentTarget.value)}
+                        onChange={(event: React.FormEvent<HTMLInputElement>): void =>
+                            setConfirmNewPassword(event.currentTarget.value)
+                        }
                     />
                 </Form.Group>
 
                 <Form.Group controlId="formChangePasswordSubmit">
-                    <Button variant="primary" type="submit">Change Password</Button>
+                    <Button variant="primary" type="submit">
+                        Change Password
+                    </Button>
                 </Form.Group>
-
             </Form>
-
         </>
     );
 };

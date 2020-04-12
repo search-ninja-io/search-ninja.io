@@ -7,13 +7,16 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "tsc",
+    "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -w"
   },
   "devDependencies": {
-    "@aws-cdk/aws-cognito": "^1.31.0",
-    "@aws-cdk/core": "^1.31.0",
-    "@aws-cdk/custom-resources": "^1.31.0",
-    "@aws-cdk/aws-lambda": "^1.31.0",
+    "@aws-cdk/aws-cognito": "^1.32.0",
+    "@aws-cdk/aws-iam": "^1.32.0",
+    "@aws-cdk/aws-lambda": "^1.32.0",
+    "@aws-cdk/aws-route53": "^1.32.0",
+    "@aws-cdk/core": "^1.32.0",
+    "@aws-cdk/custom-resources": "^1.32.0",
     "typescript": "^3.8.3"
   },
   "dependencies": {}

@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 
-import "./App.css";
+import './App.css';
 
 import { StateProvider, State, StateAction, LoginStateAction } from './components/State';
-import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 
 import { NavigationBar } from './components/navigationbar/NavigationBar';
 
@@ -18,21 +18,19 @@ import { Search } from './components/search/Search';
 
 import { NotFound } from './components/NotFound';
 
-const App = () => {
-
-    const reducer = (prevState: State, action: StateAction) => {
-        console.log("App.reducer", action);
+const App = (): JSX.Element => {
+    const reducer = (prevState: State, action: StateAction): State => {
         switch (action.type) {
             case 'Login':
                 return {
                     ...prevState,
-                    session: (action as LoginStateAction).session
+                    session: (action as LoginStateAction).session,
                 };
 
             case 'Logout':
                 return {
                     ...prevState,
-                    session: undefined
+                    session: undefined,
                 };
 
             default:
@@ -41,7 +39,7 @@ const App = () => {
     };
 
     const initialState = {
-        session: undefined
+        session: undefined,
     };
 
     return (
@@ -49,7 +47,9 @@ const App = () => {
             <Router>
                 <NavigationBar />
                 <Switch>
-                    <Route exact path="/"><Redirect to="/home" /></Route>
+                    <Route exact path="/">
+                        <Redirect to="/home" />
+                    </Route>
                     <Route exact path="/home" component={Home} />
                     <Route exact path="/signup" component={SignUp} />
                     <Route exact path="/login" component={Login} />
@@ -60,9 +60,8 @@ const App = () => {
                     <Route component={NotFound} />
                 </Switch>
             </Router>
-        </StateProvider >
+        </StateProvider>
     );
-
 };
 
 export default App;

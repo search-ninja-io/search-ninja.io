@@ -3,10 +3,9 @@ import { useStateValue, LogoutStateAction } from '../State';
 import { logout } from '../../utils/Auth';
 import { Redirect } from 'react-router-dom';
 
-import { MessageBanner } from "../banner/MessageBanner";
+import { MessageBanner } from '../banner/MessageBanner';
 
-export const Logout = () => {
-
+export const Logout = (): JSX.Element => {
     const [error, setError] = useState<Error>();
 
     const [{ session }, dispatch] = useStateValue();
@@ -14,13 +13,11 @@ export const Logout = () => {
     useEffect(() => {
         logout()
             .then(() => dispatch(LogoutStateAction()))
-            .catch(err => setError);
+            .catch(() => setError);
     }, [session, dispatch]);
 
     if (!session) {
-        return (
-            <Redirect to="/home" />
-        );
+        return <Redirect to="/home" />;
     }
 
     return (
@@ -29,7 +26,6 @@ export const Logout = () => {
             <h1>Logout in progress</h1>
         </>
     );
-
 };
 
 export default Logout;

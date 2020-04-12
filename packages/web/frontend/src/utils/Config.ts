@@ -1,7 +1,8 @@
 /* eslint import/no-webpack-loader-syntax: off */
-import * as loadedConfig from "!val-loader!./ConfigLoader";
+// eslint-disable-next-line import/no-unresolved
+import * as loadedConfig from '!val-loader!./ConfigLoader';
 
-export interface IConfig {
+export interface Config {
     Cognito: {
         Region: string;
         UserPoolId: string;
@@ -10,4 +11,4 @@ export interface IConfig {
     };
 }
 
-export const config = loadedConfig as IConfig;
+export const config = loadedConfig as Config;

@@ -2,9 +2,9 @@
   "name": "@search-ninja/workspace",
   "private": true,
   "scripts": {
-    "wipe": "lerna clean",
     "clean": "lerna run clean",
     "build": "lerna run build",
+    "lint": "lerna run lint",
     "watch": "lerna run --parallel watch",
     "start": "lerna run start --stream --no-prefix --scope @search-ninja-web/frontend",
     "deploy": "lerna run deploy --scope @search-ninja-aws/cdk-stack",

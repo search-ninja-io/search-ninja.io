@@ -1,37 +1,91 @@
 {
-    "window.zoomLevel": 1,
-    "terminal.integrated.shell.osx": "/bin/zsh",
-    "terminal.integrated.rendererType": "dom",
-    "terminal.integrated.fontFamily": "MesloLGS NF",
-    "editor.detectIndentation": false,
-    "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
-    "editor.wordWrapColumn": 160,
-    "files.exclude": {
-        "**/node_modules": true
+  "window.zoomLevel": 1,
+  "terminal.integrated.shell.osx": "/bin/zsh",
+  "terminal.integrated.rendererType": "dom",
+  "terminal.integrated.fontFamily": "MesloLGS NF",
+  "editor.detectIndentation": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "files.exclude": {
+    "**/node_modules": true
+  },
+  "workbench.tree.indent": 20,
+  "eslint.packageManager": "yarn",
+  "tslint.packageManager": "yarn",
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "[javascript]": {
+    "editor.formatOnSave": false
+  },
+  "[javascriptreact]": {
+    "editor.formatOnSave": false
+  },
+  "[typescript]": {
+    "editor.formatOnSave": false
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": false
+  },
+  "browser-preview.chromeExecutable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "browser-preview.startUrl": "http://localhost:3000",
+  "liveSassCompile.settings.formats": [
+    {
+      "format": "compressed",
+      "extensionName": ".min.css",
+      "savePath": "/dist/css"
+    }
+  ],
+  "liveSassCompile.settings.generateMap": false,
+  "color-highlight.markerType": "dot-before",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 500,
+  "todo-tree.highlights.enabled": false,
+  "editor.fontSize": 14,
+  "better-comments.tags": [
+    {
+      "tag": "!",
+      "color": "#FF2D00",
+      "strikethrough": false,
+      "backgroundColor": "transparent"
     },
-    "workbench.tree.indent": 20,
-    "eslint.packageManager": "yarn",
-    "tslint.packageManager": "yarn",
-    "eslint.validate": [
-        "javascript",
-        "javascriptreact",
-        "typescript",
-        "typescriptreact",
-    ],
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
+    {
+      "tag": "?",
+      "color": "#3498DB",
+      "strikethrough": false,
+      "backgroundColor": "transparent"
     },
-    "[javascript]": {
-        "editor.formatOnSave": false,
+    {
+      "tag": "//",
+      "color": "#474747",
+      "strikethrough": true,
+      "backgroundColor": "transparent"
     },
-    "[javascriptreact]": {
-        "editor.formatOnSave": false,
+    {
+      "tag": "todo",
+      "color": "#FF8C00",
+      "strikethrough": false,
+      "backgroundColor": "transparent"
     },
-    "[typescript]": {
-        "editor.formatOnSave": false,
+    {
+      "tag": "fixme",
+      "color": "#FF8C00",
+      "strikethrough": false,
+      "backgroundColor": "transparent"
     },
-    "[typescriptreact]": {
-        "editor.formatOnSave": false,
-    },
+    {
+      "tag": "*",
+      "color": "#98C379",
+      "strikethrough": false,
+      "backgroundColor": "transparent"
+    }
+  ],
+  "editor.fontFamily": "Fira Code",
+"editor.fontLigatures": true
 }
