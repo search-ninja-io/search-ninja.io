@@ -1,17 +1,37 @@
 {
-  "window.zoomLevel": 1,
-  "terminal.integrated.shell.osx": "/bin/zsh",
-  "terminal.integrated.rendererType": "dom",
-  "terminal.integrated.fontFamily": "MesloLGS NF",
-  "editor.detectIndentation": false,
-  "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
-  "editor.wordWrapColumn": 160,
-  "[typescript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
-},
-"files.exclude": {
-    "**/node_modules": true
-},
-"workbench.tree.indent": 20
+    "window.zoomLevel": 1,
+    "terminal.integrated.shell.osx": "/bin/zsh",
+    "terminal.integrated.rendererType": "dom",
+    "terminal.integrated.fontFamily": "MesloLGS NF",
+    "editor.detectIndentation": false,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.wordWrapColumn": 160,
+    "files.exclude": {
+        "**/node_modules": true
+    },
+    "workbench.tree.indent": 20,
+    "eslint.packageManager": "yarn",
+    "tslint.packageManager": "yarn",
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    "[javascript]": {
+        "editor.formatOnSave": false,
+    },
+    "[javascriptreact]": {
+        "editor.formatOnSave": false,
+    },
+    "[typescript]": {
+        "editor.formatOnSave": false,
+    },
+    "[typescriptreact]": {
+        "editor.formatOnSave": false,
+    },
 }
