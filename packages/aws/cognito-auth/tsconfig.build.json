@@ -1,5 +1,5 @@
 {
-    "extends": "../../../tsconfig.base.json",
+    "extends": "../../../tsconfig.json",
     "compilerOptions": {
         "outDir": "dist",
 
@@ -48,7 +48,7 @@
     "exclude": [
         "node_modules",
         "** / *.spec.ts",
-        "dist/** / *"
+        "dist / ** / *"
     ]
 }
 */

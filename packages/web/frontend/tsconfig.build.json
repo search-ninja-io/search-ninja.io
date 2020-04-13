@@ -1,7 +1,6 @@
 {
-    "extends": "../../../tsconfig.base.json",
+    "extends": "../../../node_modules/@search-ninja-tools/typescript-config/tsconfig.base.json",
     "compilerOptions": {
-        "outDir": "dist",
         "target": "es5",
         "module": "esnext",
         "lib": ["dom", "dom.iterable", "esnext"],

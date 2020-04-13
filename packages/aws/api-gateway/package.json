@@ -10,13 +10,5 @@
         "lint": "eslint . --ext .ts,.tsx",
         "watch": "tsc -w"
     },
-    "devDependencies": {
-        "@aws-cdk/aws-apigateway": "^1.32.0",
-        "@aws-cdk/aws-certificatemanager": "^1.32.0",
-        "@aws-cdk/aws-lambda": "^1.32.0",
-        "@aws-cdk/aws-route53": "^1.32.0",
-        "@aws-cdk/aws-route53-targets": "^1.32.0",
-        "typescript": "^3.8.3"
-    },
     "dependencies": {}
 }

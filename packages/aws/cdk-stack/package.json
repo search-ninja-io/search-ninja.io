@@ -17,21 +17,9 @@
         "destroy": "cdk destroy",
         "deploy": "cdk deploy"
     },
-    "devDependencies": {
-        "@aws-cdk/core": "^1.32.0",
+    "dependencies": {
         "@search-ninja-aws/api-gateway": "^1.0.0",
         "@search-ninja-aws/cognito-auth": "^1.0.0",
-        "@search-ninja-aws/lambda-azure-ad-token-handler": "^1.0.0",
-        "@types/jest": "^24.0.0",
-        "@types/node": "^13.9.3",
-        "aws-cdk": "^1.32.0",
-        "dotenv": "^8.2.0",
-        "dotenv-expand": "^5.1.0",
-        "jest": "^24.0.0",
-        "source-map-support": "^0.5.16",
-        "ts-jest": "^24.0.0",
-        "ts-node": "^8.8.1",
-        "typescript": "~3.8.3"
-    },
-    "dependencies": {}
+        "@search-ninja-aws/lambda-azure-ad-token-handler": "^1.0.0"
+    }
 }

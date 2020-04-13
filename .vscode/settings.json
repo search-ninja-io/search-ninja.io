@@ -87,5 +87,7 @@
     }
   ],
   "editor.fontFamily": "Fira Code",
-"editor.fontLigatures": true
+  "editor.fontLigatures": true,
+  "eslint.alwaysShowStatus": true,
+  "eslint.workingDirectories": ["./packages/*/"]
 }
