@@ -9,6 +9,7 @@ import {
     CfnUserPoolIdentityProvider,
     CfnUserPool,
     Mfa,
+    CfnUserPoolRiskConfigurationAttachment,
 } from '@aws-cdk/aws-cognito';
 import { HostedZone, ARecord, RecordTarget } from '@aws-cdk/aws-route53';
 import { AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId } from '@aws-cdk/custom-resources';
@@ -27,7 +28,10 @@ export class SearchNinjaAuth {
         const hostedZoneId = config.HOSTED_ZONE_ID;
         const hostedZoneName = config.HOSTED_ZONE_NAME;
         const certificateArn = config.CERTIFICATE_ARN;
+
         const domainName = config.COGNITO_AUTH_DOMAIN_NAME;
+        const isFullDomain = (): boolean => domainName.indexOf('.') > 0;
+        const fullDomainName = isFullDomain() ? domainName : domainName + '.auth.' + region + '.amazoncognito.com';
 
         const emailFrom = config.COGNITO_AUTH_EMAIL_FROM;
         const emailReplyTo = config.COGNITO_AUTH_EMAIL_REPLY_TO;
@@ -48,7 +52,7 @@ export class SearchNinjaAuth {
             handler: 'index.customMessageHandler',
             code: Code.fromAsset(lambdaPath),
             environment: {
-                USER_POOL_DOMAIN: 'https://' + domainName,
+                USER_POOL_DOMAIN: 'https://' + fullDomainName,
             },
         });
 
@@ -112,6 +116,65 @@ export class SearchNinjaAuth {
                 },
             ],
         };
+        cfnUserPool.userPoolAddOns = {
+            advancedSecurityMode: 'ENFORCED',
+        };
+        if (cfnUserPool.schema) {
+            (cfnUserPool.schema as CfnUserPool.SchemaAttributeProperty[]).push({
+                name: 'mfa',
+                attributeDataType: 'String',
+                mutable: true,
+            });
+        }
+
+        const cfnUserPoolRiskConfigAtt = new CfnUserPoolRiskConfigurationAttachment(
+            stack,
+            'UserPoolRiskConfigurationAttachment',
+            {
+                clientId: 'ALL',
+                userPoolId: userPool.userPoolId,
+                accountTakeoverRiskConfiguration: {
+                    actions: {
+                        lowAction: {
+                            eventAction: 'MFA_IF_CONFIGURED',
+                            notify: true,
+                        },
+                        mediumAction: {
+                            eventAction: 'MFA_IF_CONFIGURED',
+                            notify: true,
+                        },
+                        highAction: {
+                            eventAction: 'MFA_IF_CONFIGURED',
+                            notify: true,
+                        },
+                    },
+                    notifyConfiguration: {
+                        // TODO: Email templates for adaptive authentication
+                        /*
+                        noActionEmail: {
+                            subject: '',
+                            htmlBody: '',
+                            textBody: '',
+                        }, // Allowed sign-ins
+                        mfaEmail: {
+                            subject: '',
+                            htmlBody: '',
+                            textBody: '',
+                        }, // MFA required sign-ins
+                        blockEmail: {
+                            subject: '',
+                            htmlBody: '',
+                            textBody: '',
+                        }, // Blocked sign-ins
+                        */
+                        sourceArn: emailSourceArn,
+                        from: emailFrom,
+                        replyTo: emailReplyTo,
+                    },
+                },
+            },
+        );
+        cfnUserPoolRiskConfigAtt.addDependsOn(cfnUserPool);
 
         const supportedIdentityProviders = ['COGNITO'];
         const userPoolIdentityProviderGoogleIdp = new CfnUserPoolIdentityProvider(
@@ -153,51 +216,58 @@ export class SearchNinjaAuth {
         });
         cfnUserPoolClient.addDependsOn(userPoolIdentityProviderGoogleIdp);
 
-        const cfnUserPoolDomain = new CfnUserPoolDomain(stack, 'UserPoolDomain' + nameSuffix, {
-            userPoolId: userPool.userPoolId,
-            domain: domainName,
-            customDomainConfig: {
-                certificateArn: certificateArn,
-            },
-        });
-
-        const describeCognitoUserPoolDomain = new AwsCustomResource(stack, 'DescribeCognitoUserPoolDomain', {
-            resourceType: 'Custom::DescribeCognitoUserPoolDomain',
-            onCreate: {
-                region: region,
-                service: 'CognitoIdentityServiceProvider',
-                action: 'describeUserPoolDomain',
-                parameters: {
-                    Domain: cfnUserPoolDomain.domain,
+        if (isFullDomain()) {
+            const cfnUserPoolDomain = new CfnUserPoolDomain(stack, 'UserPoolDomain' + nameSuffix, {
+                userPoolId: userPool.userPoolId,
+                domain: domainName,
+                customDomainConfig: {
+                    certificateArn: certificateArn,
                 },
-                physicalResourceId: PhysicalResourceId.of(cfnUserPoolDomain.domain),
-            },
-            policy: AwsCustomResourcePolicy.fromSdkCalls({
-                resources: AwsCustomResourcePolicy.ANY_RESOURCE,
-            }),
-        });
-        describeCognitoUserPoolDomain.node.addDependency(cfnUserPoolDomain);
+            });
 
-        const userPoolDomainDistribution = describeCognitoUserPoolDomain.getResponseField(
-            'DomainDescription.CloudFrontDistribution',
-        );
-
-        const userPoolDomainAliasRecord = new ARecord(stack, 'UserPoolDomainAliasRecord', {
-            recordName: cfnUserPoolDomain.domain,
-            target: RecordTarget.fromAlias({
-                // TODO - Check this, if it is really working
-                // bind: (record: IRecordSet) => ({
-                bind: () => ({
-                    hostedZoneId: cloudFrontHostedZoneId,
-                    dnsName: userPoolDomainDistribution,
+            const describeCognitoUserPoolDomain = new AwsCustomResource(stack, 'DescribeCognitoUserPoolDomain', {
+                resourceType: 'Custom::DescribeCognitoUserPoolDomain',
+                onCreate: {
+                    region: region,
+                    service: 'CognitoIdentityServiceProvider',
+                    action: 'describeUserPoolDomain',
+                    parameters: {
+                        Domain: cfnUserPoolDomain.domain,
+                    },
+                    physicalResourceId: PhysicalResourceId.of(cfnUserPoolDomain.domain),
+                },
+                policy: AwsCustomResourcePolicy.fromSdkCalls({
+                    resources: AwsCustomResourcePolicy.ANY_RESOURCE,
                 }),
-            }),
-            zone: HostedZone.fromHostedZoneAttributes(stack, 'HostedAuthZone' + nameSuffix, {
-                hostedZoneId: hostedZoneId,
-                zoneName: hostedZoneName,
-            }),
-        });
-        userPoolDomainAliasRecord.node.addDependency(cfnUserPoolDomain);
+            });
+            describeCognitoUserPoolDomain.node.addDependency(cfnUserPoolDomain);
+
+            const userPoolDomainDistribution = describeCognitoUserPoolDomain.getResponseField(
+                'DomainDescription.CloudFrontDistribution',
+            );
+
+            const userPoolDomainAliasRecord = new ARecord(stack, 'UserPoolDomainAliasRecord', {
+                recordName: cfnUserPoolDomain.domain,
+                target: RecordTarget.fromAlias({
+                    // TODO - Check this, if it is really working
+                    // bind: (record: IRecordSet) => ({
+                    bind: () => ({
+                        hostedZoneId: cloudFrontHostedZoneId,
+                        dnsName: userPoolDomainDistribution,
+                    }),
+                }),
+                zone: HostedZone.fromHostedZoneAttributes(stack, 'HostedAuthZone' + nameSuffix, {
+                    hostedZoneId: hostedZoneId,
+                    zoneName: hostedZoneName,
+                }),
+            });
+            userPoolDomainAliasRecord.node.addDependency(cfnUserPoolDomain);
+        } else {
+            new CfnUserPoolDomain(stack, 'UserPoolDomain' + nameSuffix, {
+                userPoolId: userPool.userPoolId,
+                domain: domainName,
+            });
+        }
 
         const identityPool = new CfnIdentityPool(stack, 'IdentityPool' + nameSuffix, {
             allowUnauthenticatedIdentities: false,
