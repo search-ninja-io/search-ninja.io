@@ -40,8 +40,6 @@ export const ChangePassword = (props: ChangePasswordProps): JSX.Element => {
             .catch((err) => props.setMessage({ errors: [err] }));
     };
 
-    console.log('ChangePassword.render', password, newPassword, confirmNewPassword);
-
     return (
         <>
             <Form onSubmit={onSubmit}>
