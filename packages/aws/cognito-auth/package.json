@@ -1,14 +1,14 @@
 {
-  "name": "@search-ninja-aws/cognito-auth",
-  "version": "1.0.0",
-  "main": "dist/aws-cdk/index.js",
-  "types": "dist/aws-cdk/index.d.ts",
-  "license": "MIT",
-  "scripts": {
-    "clean": "rimraf dist",
-    "build": "tsc",
-    "lint": "eslint . --ext .ts,.tsx",
-    "watch": "tsc -w"
-  },
-  "dependencies": {}
+    "name": "@search-ninja-aws/cognito-auth",
+    "version": "1.0.0",
+    "main": "dist/aws-cdk/index.js",
+    "types": "dist/aws-cdk/index.d.ts",
+    "license": "MIT",
+    "scripts": {
+        "clean": "rimraf dist",
+        "build": "tsc -b tsconfig.build.json",
+        "lint": "eslint . --ext .ts,.tsx",
+        "watch": "tsc -w -p tsconfig.build.json"
+    },
+    "dependencies": {}
 }

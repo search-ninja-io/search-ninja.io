@@ -1,6 +1,6 @@
-import React from 'react';
+import { hot } from 'react-hot-loader/root';
 
-import './App.css';
+import React from 'react';
 
 import { StateProvider, State, StateAction, LoginStateAction } from './components/State';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
@@ -64,4 +64,4 @@ const App = (): JSX.Element => {
     );
 };
 
-export default App;
+export default hot(App);

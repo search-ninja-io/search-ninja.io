@@ -1,55 +1,30 @@
 {
     "name": "@search-ninja-web/frontend",
     "version": "1.0.0",
-    "private": true,
+    "license": "MIT",
+    "scripts": {
+        "clean": "rimraf dist",
+        "build": "webpack --mode development",
+        "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+        "start": "webpack-dev-server --mode development"
+    },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^1.2.28",
         "@fortawesome/free-solid-svg-icons": "^5.13.0",
         "@fortawesome/react-fontawesome": "^0.1.9",
-        "amazon-cognito-identity-js": "^3.2.6",
+        "amazon-cognito-identity-js": "^4.2.1",
         "aws-sdk": "^2.656.0",
         "bootstrap": "^4.4.1",
-        "jquery": "^3.4.1",
+        "jquery": "^3.5.0",
         "popper.js": "^1.16.1",
         "qrcode.react": "^1.0.0",
         "react": "^16.13.1",
         "react-bootstrap": "^1.0.0",
         "react-dom": "^16.13.1",
+        "react-hot-loader": "^4.12.20",
         "react-is": "^16.13.1",
         "react-router-bootstrap": "^0.25.0",
         "react-router-dom": "^5.1.2",
-        "styled-components": "^5.0.1"
-    },
-    "scripts": {
-        "clean": "rimraf build",
-        "lint": "eslint . --ext .ts,.tsx",
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject"
-    },
-    "eslintConfig": {
-        "extends": "react-app"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
-    },
-    "lint-staged": {
-        "*.{js,jsx}": "eslint",
-        "*.{ts,tsx}": "eslint"
-    },
-    "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
+        "styled-components": "^5.1.0"
     }
 }

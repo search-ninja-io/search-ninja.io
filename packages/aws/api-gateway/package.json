@@ -6,9 +6,9 @@
     "license": "MIT",
     "scripts": {
         "clean": "rimraf dist",
-        "build": "tsc",
+        "build": "tsc -b tsconfig.build.json",
         "lint": "eslint . --ext .ts,.tsx",
-        "watch": "tsc -w"
+        "watch": "tsc -w -p tsconfig.build.json"
     },
     "dependencies": {}
 }

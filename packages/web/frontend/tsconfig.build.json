@@ -1,17 +1,8 @@
 {
-    "extends": "../../../node_modules/@search-ninja-tools/typescript-config/tsconfig.base.json",
+    "extends": "../../../tsconfig.json",
     "compilerOptions": {
-        "target": "es5",
-        "module": "esnext",
-        "lib": ["dom", "dom.iterable", "esnext"],
-        "allowJs": true,
-        "skipLibCheck": true,
-        "resolveJsonModule": true,
-        "jsx": "react",
-        "allowSyntheticDefaultImports": true,
-        "moduleResolution": "node",
-        "isolatedModules": true,
-        "noEmit": true
+        "outDir": "./dist"
     },
-    "include": ["src"]
+    "include": ["./src/**/*"],
+    "exclude": ["../../../node_modules/**/*", "./node_modules/**/*", "./dist/**/*"]
 }
