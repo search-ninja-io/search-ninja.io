@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStateValue, LogoutStateAction } from '../State';
-import { changePassword } from '../../utils/Auth';
+import { changePassword } from '../../auth/Auth';
 import { Form, Button } from 'react-bootstrap';
 import { MessageBannerProps } from '../banner/MessageBanner';
 

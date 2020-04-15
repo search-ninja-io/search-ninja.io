@@ -4,7 +4,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useStateValue, LoginStateAction } from '../State';
-import { getSession } from '../../utils/Auth';
+import { getSession } from '../../auth/Auth';
 
 import { NavigationBarLarge } from './NavigationBarLarge';
 import { NavigationBarSmall } from './NavigationBarSmall';

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Container, Form, Jumbotron } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
-import { forgotPasswordCodeRequest, forgotPasswordConfirm } from '../../utils/Auth';
+import { forgotPasswordCodeRequest, forgotPasswordConfirm } from '../../auth/Auth';
 import { MessageBanner } from '../banner/MessageBanner';
 import { LogoutStateAction, useStateValue } from '../State';
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { associateSoftwareToken, verifySoftwareToken, getMfaDevice, disableMfaDevice } from '../../utils/Auth';
+import { associateSoftwareToken, verifySoftwareToken, getMfaDevice, disableMfaDevice } from '../../auth/Auth';
 import QRCode from 'qrcode.react';
 import { Form, Button } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
@@ -131,7 +131,7 @@ const AddMfaDevice = (props: AddMfaDeviceProps): JSX.Element => {
             <Form.Group controlId="formTOTPCode">
                 <Form.Label>QR Code</Form.Label>
                 <br />
-                <QRCode value={generatedQRCode} />
+                <QRCode includeMargin={true} value={generatedQRCode} />
             </Form.Group>
 
             <Form.Group controlId="formTOTPVerificationCode">

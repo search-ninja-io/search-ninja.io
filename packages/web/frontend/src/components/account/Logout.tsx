@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useStateValue, LogoutStateAction } from '../State';
-import { logout } from '../../utils/Auth';
+import { logout } from '../../auth/Auth';
 import { Redirect } from 'react-router-dom';
 
 import { MessageBanner } from '../banner/MessageBanner';

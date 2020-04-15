@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { signup } from '../../utils/Auth';
+import { signup } from '../../auth/Auth';
 import { Container, Jumbotron, Form, Button } from 'react-bootstrap';
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components';

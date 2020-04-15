@@ -6,7 +6,7 @@ import {
     LoginResult,
     LoginResultTotpRequired,
     MfaResult,
-} from '../../utils/Auth';
+} from '../../auth/Auth';
 import { useStateValue, LoginStateAction } from '../State';
 import { Redirect, Link } from 'react-router-dom';
 
@@ -36,6 +36,7 @@ interface DisplayModeMfaState extends DisplayModeState {
     displayMode: DisplayMode.Mfa;
     user: CognitoUser;
     device: string;
+    rememberDevice: boolean;
     err?: Error;
 }
 
@@ -56,11 +57,12 @@ export const Login = (): JSX.Element => {
                 err: err ? err : new Error('No Login Result returned, this should not happen, but it does!'),
             });
         } else if (loginResult.type === 'LoginResultTotpRequired') {
-            const { user, device } = loginResult as LoginResultTotpRequired;
+            const { user, device, rememberDevice } = loginResult as LoginResultTotpRequired;
             setDisplayModeState({
                 displayMode: DisplayMode.Mfa,
                 user: user,
                 device: device,
+                rememberDevice: rememberDevice,
             });
         } else {
             //if (loginResult.type === "LoginResult") {
@@ -89,6 +91,7 @@ export const Login = (): JSX.Element => {
             <MfaForm
                 user={displayModeState.user}
                 device={displayModeState.device}
+                rememberDevice={displayModeState.rememberDevice}
                 callback={handleMfaResult}
                 error={displayModeState.err}
             />
@@ -183,6 +186,7 @@ const LoginForm = (props: LoginFormProps): JSX.Element => {
 interface MfaFormProps {
     user: CognitoUser;
     device: string;
+    rememberDevice: boolean;
     error?: Error;
     callback: (err?: Error, mfaResult?: MfaResult) => void;
 }
@@ -193,7 +197,7 @@ const MfaForm = (props: MfaFormProps): JSX.Element => {
 
     const onSubmitMfa = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
-        sendSoftwareToken(props.user, mfaCode)
+        sendSoftwareToken(props.user, mfaCode, props.rememberDevice)
             .then((mfaResult) => props.callback(undefined, mfaResult))
             .catch((err) => props.callback(err, undefined));
     };
