@@ -52,10 +52,7 @@ export const NavigationBar = withRouter((props: RouteComponentProps) => {
 
     useEffect(() => {
         if (!session) {
-            sessionActions
-                .recoverSession()
-                //                .then((res) => console.log('Automatic Login: ' + res ? 'Session found' : 'No session found'))
-                .catch((err) => console.error('Session Recovery Error', err));
+            sessionActions.recoverSession().catch((err) => console.error('Session Recovery Error', err));
         }
     }, [session, sessionActions]);
 

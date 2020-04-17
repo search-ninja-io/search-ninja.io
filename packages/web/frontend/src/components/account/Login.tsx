@@ -4,27 +4,21 @@ import { Form, Button, Jumbotron, Container } from 'react-bootstrap';
 import styled from 'styled-components';
 import { useSessionStore } from '../../state/SessionStore';
 import { MessageBanner } from '../banner/MessageBanner';
-import { LoginResultTotpRequired } from '../../auth/Auth';
 
 const Styled = styled.div``;
 
 export const Login = (): JSX.Element => {
-    const [showMfaForm, setShowMfaForm] = useState<LoginResultTotpRequired>();
-    const [, sessionActions] = useSessionStore();
+    const [session, sessionActions] = useSessionStore();
 
     if (sessionActions.isUserLoggedIn()) {
         return <Redirect to="/home" />;
-    } else if (showMfaForm) {
-        return <MfaForm data={showMfaForm} />;
+    } else if (session.totpSession) {
+        return <MfaForm />;
     }
-    return <LoginForm showMfaForm={setShowMfaForm} />;
+    return <LoginForm />;
 };
 
-interface LoginFormProps {
-    showMfaForm: (data: LoginResultTotpRequired) => void;
-}
-
-const LoginForm = (props: LoginFormProps): JSX.Element => {
+const LoginForm = (): JSX.Element => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [rememberDevice, setRememberDevice] = useState(false);
@@ -35,12 +29,7 @@ const LoginForm = (props: LoginFormProps): JSX.Element => {
 
     const onSubmitLogin = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
-        sessionActions
-            .login(username, password, rememberDevice)
-            .then((result) => {
-                if (result) props.showMfaForm(result);
-            })
-            .catch((err) => setError(err));
+        sessionActions.login(username, password, rememberDevice).catch((err) => setError(err));
     };
 
     return (
@@ -108,19 +97,15 @@ const LoginForm = (props: LoginFormProps): JSX.Element => {
     );
 };
 
-interface MfaFormProps {
-    data: LoginResultTotpRequired;
-}
-
-const MfaForm = (props: MfaFormProps): JSX.Element => {
+const MfaForm = (): JSX.Element => {
     const [mfaCode, setMfaCode] = useState('');
     const [error, setError] = useState<Error>();
 
-    const [, sessionActions] = useSessionStore();
+    const [{ totpSession: tempSession }, sessionActions] = useSessionStore();
 
     const onSubmitMfa = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
-        sessionActions.verifyToken(mfaCode, props.data).catch((err) => setError(err));
+        sessionActions.sendSoftwareToken(mfaCode).catch((err) => setError(err));
     };
 
     return (
@@ -140,7 +125,7 @@ const MfaForm = (props: MfaFormProps): JSX.Element => {
                             <Form.Label>
                                 Device
                                 <br />
-                                {props.data.device}
+                                {tempSession ? tempSession.device : 'n/a'}
                             </Form.Label>
                         </Form.Group>
 

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { associateSoftwareToken, verifySoftwareToken, getMfaDevice, disableMfaDevice } from '../../auth/Auth';
 import QRCode from 'qrcode.react';
 import { Form, Button } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
@@ -62,19 +61,23 @@ interface MfaDeviceProps {
 const MfaDevice = (props: MfaDeviceProps): JSX.Element => {
     const [mfaDevice, setMfaDevice] = useState<string>();
 
+    const [, sessionActions] = useSessionStore();
+
     useEffect(() => {
         if (!mfaDevice) {
-            getMfaDevice()
+            sessionActions
+                .fetchMfaDevice()
                 .then((mfaDevice) => setMfaDevice(mfaDevice))
                 .catch((err) => props.callback(err, undefined));
         }
-    }, [props, mfaDevice]);
+    }, [props, mfaDevice, sessionActions]);
 
     const onChangeMfaEnabled = (): void => {
         if (mfaDevice === undefined || mfaDevice.length === 0) {
             props.callback(undefined, 'SUCCESS');
         } else {
-            disableMfaDevice()
+            sessionActions
+                .disableMfaDevice()
                 .then(() => setMfaDevice(undefined))
                 .catch((err) => props.callback(err, undefined));
         }
@@ -107,13 +110,16 @@ const AddMfaDevice = (props: AddMfaDeviceProps): JSX.Element => {
     const [verificationCode, setVerificationCode] = useState<string>();
     const [deviceName, setDeviceName] = useState<string>();
 
+    const [, sessionActions] = useSessionStore();
+
     useEffect(() => {
         if (!generatedQRCode) {
-            associateSoftwareToken()
+            sessionActions
+                .associateSoftwareToken()
                 .then((data) => setGeneratedQRCode(data))
                 .catch((err) => props.callback(err, undefined));
         }
-    }, [props, generatedQRCode]);
+    }, [props, generatedQRCode, sessionActions]);
 
     const onSubmitVerify = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
@@ -123,7 +129,8 @@ const AddMfaDevice = (props: AddMfaDeviceProps): JSX.Element => {
             );
             return;
         }
-        verifySoftwareToken(verificationCode, deviceName)
+        sessionActions
+            .verifySoftwareToken(verificationCode, deviceName)
             .then(() => props.callback(undefined, 'SUCCESS'))
             .catch((err) => props.callback(err, undefined));
     };
