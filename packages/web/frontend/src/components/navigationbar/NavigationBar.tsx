@@ -3,8 +3,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { useStateValue, LoginStateAction } from '../State';
-import { getSession } from '../../auth/Auth';
+import { useSessionStore } from '../../state/SessionStore';
 
 import { NavigationBarLarge } from './NavigationBarLarge';
 import { NavigationBarSmall } from './NavigationBarSmall';
@@ -49,22 +48,16 @@ const Styled = styled.div`
 `;
 
 export const NavigationBar = withRouter((props: RouteComponentProps) => {
-    const [{ session }, dispatch] = useStateValue();
+    const [{ session }, sessionActions] = useSessionStore();
 
     useEffect(() => {
         if (!session) {
-            getSession()
-                .then((session) => {
-                    if (session) {
-                        console.log('Automatic Login: Session found and login user');
-                        dispatch(LoginStateAction(session));
-                    }
-                })
-                .catch(() => {
-                    console.log('Automatic Login: No session found');
-                });
+            sessionActions
+                .recoverSession()
+                //                .then((res) => console.log('Automatic Login: ' + res ? 'Session found' : 'No session found'))
+                .catch((err) => console.error('Session Recovery Error', err));
         }
-    }, [session, dispatch]);
+    }, [session, sessionActions]);
 
     return (
         <Styled>

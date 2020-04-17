@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useStateValue, LogoutStateAction } from '../State';
-import { changePassword } from '../../auth/Auth';
+import { useSessionStore } from '../../state/SessionStore';
 import { Form, Button } from 'react-bootstrap';
 import { MessageBannerProps } from '../banner/MessageBanner';
+import { Redirect } from 'react-router-dom';
 
 interface ChangePasswordProps {
     setMessage: React.Dispatch<React.SetStateAction<MessageBannerProps>>;
@@ -13,14 +13,12 @@ export const ChangePassword = (props: ChangePasswordProps): JSX.Element => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
-    const [{ session }, dispatch] = useStateValue();
+    const [{ session }, sessionActions] = useSessionStore();
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
 
-        if (!session) {
-            // FIXME: Does not work, fix it!
-            // return <Redirect to="/login" />;
+        if (!sessionActions.isUserLoggedIn() || !session) {
             return;
         }
 
@@ -29,16 +27,19 @@ export const ChangePassword = (props: ChangePasswordProps): JSX.Element => {
             return;
         }
 
-        changePassword(session, password, newPassword)
-            .then(() => {
-                props.setMessage({ successes: ['Successfully changed password.'] });
-                setPassword('');
-                setNewPassword('');
-                setConfirmNewPassword('');
-                dispatch(LogoutStateAction());
-            })
+        setPassword('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+
+        sessionActions
+            .changePassword(password, newPassword)
+            .then(() => props.setMessage({ successes: ['Successfully changed password.'] }))
             .catch((err) => props.setMessage({ errors: [err] }));
     };
+
+    if (!session) {
+        return <Redirect to="/login" />;
+    }
 
     return (
         <>

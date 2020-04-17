@@ -1,28 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { useStateValue, LogoutStateAction } from '../State';
-import { logout } from '../../auth/Auth';
+import React, { useEffect } from 'react';
+import { useSessionStore } from '../../state/SessionStore';
 import { Redirect } from 'react-router-dom';
 
-import { MessageBanner } from '../banner/MessageBanner';
-
 export const Logout = (): JSX.Element => {
-    const [error, setError] = useState<Error>();
-
-    const [{ session }, dispatch] = useStateValue();
+    const [{ session }, sessionActions] = useSessionStore();
 
     useEffect(() => {
-        logout()
-            .then(() => dispatch(LogoutStateAction()))
-            .catch(() => setError);
-    }, [session, dispatch]);
+        sessionActions.logout().catch((err) => console.error(err));
+    }, [session, sessionActions]);
 
-    if (!session) {
+    if (!sessionActions.isUserLoggedIn()) {
         return <Redirect to="/home" />;
     }
 
     return (
         <>
-            {error ? <MessageBanner errors={[error]} /> : <></>}
             <h1>Logout in progress</h1>
         </>
     );

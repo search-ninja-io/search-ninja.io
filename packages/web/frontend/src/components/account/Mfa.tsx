@@ -4,6 +4,7 @@ import QRCode from 'qrcode.react';
 import { Form, Button } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import { MessageBannerProps } from '../banner/MessageBanner';
+import { useSessionStore } from '../../state/SessionStore';
 
 interface MfaProps {
     setMessage: React.Dispatch<React.SetStateAction<MessageBannerProps>>;
@@ -17,6 +18,11 @@ enum DisplayMode {
 
 export const Mfa = (props: MfaProps): JSX.Element => {
     const [displayMode, setDisplayMode] = useState<DisplayMode>(DisplayMode.MfaDevice);
+    const [, sessionActions] = useSessionStore();
+
+    if (!sessionActions.isUserLoggedIn()) {
+        return <Redirect to="/login" />;
+    }
 
     const handleMfaDevice = (err?: Error): void => {
         if (err) props.setMessage({ errors: [err] });

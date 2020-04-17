@@ -21,7 +21,7 @@ export const getSession = async (): Promise<Session> => {
         const user = cognitoUserPool.getCurrentUser();
 
         if (!user) {
-            reject('No user session found');
+            reject('No loggedin user found');
             return;
         }
 

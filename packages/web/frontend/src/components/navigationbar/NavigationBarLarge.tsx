@@ -6,7 +6,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
-import { Session } from '../../utils/Auth';
+import { Session } from '../../auth/Auth';
 
 export const NavigationBarLarge = (props: { session?: Session; routeCompProps: RouteComponentProps }): JSX.Element => {
     const { session } = props;

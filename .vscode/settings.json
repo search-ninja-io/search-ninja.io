@@ -43,9 +43,7 @@
     }
   ],
   "liveSassCompile.settings.generateMap": false,
-  "color-highlight.markerType": "dot-before",
-  "files.autoSave": "afterDelay",
-  "files.autoSaveDelay": 500,
+"color-highlight.markerType": "dot-before",
   "todo-tree.highlights.enabled": false,
   "editor.fontSize": 14,
   "better-comments.tags": [

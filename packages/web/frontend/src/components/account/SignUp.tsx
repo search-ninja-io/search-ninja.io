@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { signup } from '../../auth/Auth';
 import { Container, Jumbotron, Form, Button } from 'react-bootstrap';
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import { MessageBanner } from '../banner/MessageBanner';
+import { useSessionStore } from '../../state/SessionStore';
 
 const Styled = styled.div``;
 
@@ -15,9 +15,12 @@ export const SignUp = (): JSX.Element => {
     const [error, setError] = useState<Error>();
     const [signupSuccess, setSignupSuccess] = useState(false);
 
+    const [, sessionActions] = useSessionStore();
+
     const onSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
-        signup(email, name, password)
+        sessionActions
+            .signup(email, name, password)
             .then(() => setSignupSuccess(true))
             .catch((err) => setError(err));
     };

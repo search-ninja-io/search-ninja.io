@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Nav, Navbar, Container, Row, Col } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
-import { Session } from '../../utils/Auth';
+import { Session } from '../../auth/Auth';
 
 export const NavigationBarSmall = (props: { session?: Session; routeCompProps: RouteComponentProps }): JSX.Element => {
     const { session } = props;

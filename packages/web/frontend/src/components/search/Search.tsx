@@ -1,10 +1,11 @@
 import React from 'react';
-import { useStateValue } from '../State';
+import { useSessionStore } from '../../state/SessionStore';
 import { Redirect } from 'react-router-dom';
 
 export const Search = (): JSX.Element => {
-    const [{ session }] = useStateValue();
-    if (!session) {
+    const [, sessionActions] = useSessionStore();
+
+    if (!sessionActions.isUserLoggedIn()) {
         return <Redirect to="/login" />;
     }
 

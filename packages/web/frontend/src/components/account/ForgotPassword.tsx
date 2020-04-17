@@ -2,14 +2,19 @@ import React, { useState } from 'react';
 import { Button, Container, Form, Jumbotron } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
-import { forgotPasswordCodeRequest, forgotPasswordConfirm } from '../../auth/Auth';
 import { MessageBanner } from '../banner/MessageBanner';
-import { LogoutStateAction, useStateValue } from '../State';
+import { useSessionStore } from '../../state/SessionStore';
 
 const Styled = styled.div``;
 
+enum Stage {
+    Email = 1,
+    Code = 2,
+    Changed = 3,
+}
+
 export const ForgotPassword = (): JSX.Element => {
-    const [stage, setStage] = useState(1); // 1 = email stage, 2 = code stage, 3 = changed stage
+    const [stage, setStage] = useState(Stage.Email);
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -17,12 +22,13 @@ export const ForgotPassword = (): JSX.Element => {
 
     const [error, setError] = useState<Error>();
 
-    const [, dispatch] = useStateValue();
+    const [, sessionActions] = useSessionStore();
 
     const sendCode = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
-        forgotPasswordCodeRequest(email)
-            .then(() => setStage(2))
+        sessionActions
+            .forgotPasswordCodeRequest(email)
+            .then(() => setStage(Stage.Code))
             .catch((err) => setError(err));
     };
 
@@ -34,13 +40,13 @@ export const ForgotPassword = (): JSX.Element => {
             return;
         }
 
-        forgotPasswordConfirm(email, code, newPassword)
-            .then(() => setStage(3))
-            .then(() => dispatch(LogoutStateAction()))
+        sessionActions
+            .forgotPasswordConfirm(email, code, newPassword)
+            .then(() => setStage(Stage.Changed))
             .catch((err) => setError(err));
     };
 
-    if (stage === 3) {
+    if (stage === Stage.Changed) {
         return <Redirect to="/login" />;
     }
 
@@ -56,7 +62,7 @@ export const ForgotPassword = (): JSX.Element => {
                     }}
                 >
                     <h1>Forgot Password</h1>
-                    {stage === 1 && (
+                    {stage === Stage.Email && (
                         <Form onSubmit={sendCode}>
                             <Form.Group controlId="formBasicEmail">
                                 <Form.Label>Email address</Form.Label>
@@ -77,7 +83,7 @@ export const ForgotPassword = (): JSX.Element => {
                             </Form.Group>
                         </Form>
                     )}
-                    {stage === 2 && (
+                    {stage === Stage.Code && (
                         <Form onSubmit={resetPassword}>
                             <Form.Group controlId="formBasicEmail">
                                 <Form.Label>Code</Form.Label>
@@ -129,55 +135,3 @@ export const ForgotPassword = (): JSX.Element => {
 };
 
 export default ForgotPassword;
-
-/*
-
-        <div>
-
-            {error ? <ErrorBanner errors={[error]} /> : <></>}
-
-            <h1>Forgot Password</h1>
-            {stage === 1 && (
-                <form onSubmit={sendCode} >
-
-                    <input
-                        placeholder="Email"
-                        value={email}
-                        onChange={event => setEmail(event.target.value)}
-                    />
-
-                    <button type="submit">Send verification code</button>
-
-                </form>
-            )}
-            {stage === 2 && (
-                <form onSubmit={resetPassword}>
-
-                    <input
-                        placeholder="Code"
-                        value={code}
-                        onChange={event => setCode(event.target.value)}
-                    />
-
-                    <input
-                        placeholder="New Password"
-                        value={newPassword}
-                        onChange={event => setNewPassword(event.target.value)}
-                    />
-
-                    <input
-                        placeholder="Confirm Password"
-                        value={confirmPassword}
-                        onChange={event => setConfirmPassword(event.target.value)}
-                    />
-
-                    <button type="submit">Change Password</button>
-
-                </form>
-
-            )}
-
-        </div >
-
-
-*/

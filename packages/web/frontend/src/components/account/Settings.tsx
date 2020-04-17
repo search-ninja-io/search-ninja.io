@@ -4,11 +4,18 @@ import styled from 'styled-components';
 import { MessageBanner, MessageBannerProps } from '../banner/MessageBanner';
 import { ChangePassword } from './ChangePassword';
 import { Mfa } from './Mfa';
+import { Redirect } from 'react-router-dom';
+import { useSessionStore } from '../../state/SessionStore';
 
 const Styled = styled.div``;
 
 export const Settings = (): JSX.Element => {
     const [message, setMessage] = useState<MessageBannerProps>({});
+    const [, sessionActions] = useSessionStore();
+
+    if (!sessionActions.isUserLoggedIn()) {
+        return <Redirect to="/login" />;
+    }
 
     const clearMessage = (): void => {
         setMessage({});
