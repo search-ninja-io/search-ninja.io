@@ -16,11 +16,13 @@ import { Home } from './components/home/Home';
 import { Search } from './components/search/Search';
 
 import { NotFound } from './components/NotFound';
+import MessageBanner from './components/banner/MessageBanner';
 
 const App = (): JSX.Element => {
     return (
         <Router>
             <NavigationBar />
+            <MessageBanner />
             <Switch>
                 <Route exact path="/">
                     <Redirect to="/home" />

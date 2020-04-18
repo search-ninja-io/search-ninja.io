@@ -1,18 +1,19 @@
 import React from 'react';
 import { Alert } from 'react-bootstrap';
+import { useSessionStore } from '../../state/SessionStore';
 
-export interface MessageBannerProps {
-    successes?: string[];
-    warnings?: string[];
-    errors?: Error[];
-}
+export const MessageBanner = (): JSX.Element => {
+    const [session] = useSessionStore();
 
-export const MessageBanner = (props: MessageBannerProps): JSX.Element => {
+    const successes = session.messages?.successes ? session.messages.successes : [];
+    const warnings = session.messages?.warnings ? session.messages.warnings : [];
+    const errors = session.messages?.errors ? session.messages.errors : [];
+
     return (
         <>
-            {props.errors && props.errors.length > 0 ? (
+            {errors.length > 0 ? (
                 <Alert className="m-3" key="error" variant="danger">
-                    {props.errors.map((value, index) => {
+                    {errors.map((value, index) => {
                         return <div key={'error-' + index}>{value.message}</div>;
                     })}
                 </Alert>
@@ -20,9 +21,9 @@ export const MessageBanner = (props: MessageBannerProps): JSX.Element => {
                 <></>
             )}
 
-            {props.warnings && props.warnings.length > 0 ? (
+            {warnings.length > 0 ? (
                 <Alert className="m-3" key="warning" variant="warning">
-                    {props.warnings.map((value, index) => {
+                    {warnings.map((value, index) => {
                         return <div key={'warning-' + index}>{value}</div>;
                     })}
                 </Alert>
@@ -30,9 +31,9 @@ export const MessageBanner = (props: MessageBannerProps): JSX.Element => {
                 <></>
             )}
 
-            {props.successes && props.successes.length > 0 ? (
+            {successes.length > 0 ? (
                 <Alert className="m-3" key="success" variant="success">
-                    {props.successes.map((value, index) => {
+                    {successes.map((value, index) => {
                         return <div key={'success-' + index}>{value}</div>;
                     })}
                 </Alert>

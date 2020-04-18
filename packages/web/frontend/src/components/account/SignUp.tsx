@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Container, Jumbotron, Form, Button } from 'react-bootstrap';
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components';
-import { MessageBanner } from '../banner/MessageBanner';
 import { useSessionStore } from '../../state/SessionStore';
 
 const Styled = styled.div``;
@@ -12,7 +11,6 @@ export const SignUp = (): JSX.Element => {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
 
-    const [error, setError] = useState<Error>();
     const [signupSuccess, setSignupSuccess] = useState(false);
 
     const [, sessionActions] = useSessionStore();
@@ -22,7 +20,7 @@ export const SignUp = (): JSX.Element => {
         sessionActions
             .signup(email, name, password)
             .then(() => setSignupSuccess(true))
-            .catch((err) => setError(err));
+            .catch((err) => sessionActions.setError(err));
     };
 
     if (signupSuccess) {
@@ -31,8 +29,6 @@ export const SignUp = (): JSX.Element => {
 
     return (
         <Styled>
-            {error ? <MessageBanner errors={[error]} /> : <></>}
-
             <Container className="d-flex mt-5 justify-content-center">
                 <Jumbotron
                     className="m-0 p-5"

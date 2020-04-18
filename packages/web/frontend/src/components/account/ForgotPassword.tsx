@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Button, Container, Form, Jumbotron } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
-import { MessageBanner } from '../banner/MessageBanner';
 import { useSessionStore } from '../../state/SessionStore';
 
 const Styled = styled.div``;
@@ -20,8 +19,6 @@ export const ForgotPassword = (): JSX.Element => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    const [error, setError] = useState<Error>();
-
     const [, sessionActions] = useSessionStore();
 
     const sendCode = (event: React.FormEvent<HTMLFormElement>): void => {
@@ -29,21 +26,21 @@ export const ForgotPassword = (): JSX.Element => {
         sessionActions
             .forgotPasswordCodeRequest(email)
             .then(() => setStage(Stage.Code))
-            .catch((err) => setError(err));
+            .catch((err) => sessionActions.setError(err));
     };
 
     const resetPassword = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
 
         if (newPassword !== confirmPassword) {
-            setError(new Error('Passwords are not the same'));
+            sessionActions.setError(new Error('Passwords are not the same'));
             return;
         }
 
         sessionActions
             .forgotPasswordConfirm(email, code, newPassword)
             .then(() => setStage(Stage.Changed))
-            .catch((err) => setError(err));
+            .catch((err) => sessionActions.setError(err));
     };
 
     if (stage === Stage.Changed) {
@@ -52,8 +49,6 @@ export const ForgotPassword = (): JSX.Element => {
 
     return (
         <Styled>
-            {error ? <MessageBanner errors={[error]} /> : <></>}
-
             <Container className="d-flex mt-5 justify-content-center">
                 <Jumbotron
                     className="m-0 p-5"

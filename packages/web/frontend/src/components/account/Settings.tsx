@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Col, Container, Jumbotron, Nav, Row, Tab } from 'react-bootstrap';
 import styled from 'styled-components';
-import { MessageBanner, MessageBannerProps } from '../banner/MessageBanner';
 import { ChangePassword } from './ChangePassword';
 import { Mfa } from './Mfa';
 import { Redirect } from 'react-router-dom';
@@ -10,7 +9,6 @@ import { useSessionStore } from '../../state/SessionStore';
 const Styled = styled.div``;
 
 export const Settings = (): JSX.Element => {
-    const [message, setMessage] = useState<MessageBannerProps>({});
     const [, sessionActions] = useSessionStore();
 
     if (!sessionActions.isUserLoggedIn()) {
@@ -18,13 +16,11 @@ export const Settings = (): JSX.Element => {
     }
 
     const clearMessage = (): void => {
-        setMessage({});
+        sessionActions.clearMessages();
     };
 
     return (
         <Styled>
-            {message.successes || message.warnings || message.errors ? <MessageBanner {...message} /> : <></>}
-
             <Container className="d-flex mt-5 justify-content-center">
                 <Jumbotron className="m-0 p-5 w-100">
                     <h1>Settings</h1>
@@ -49,10 +45,10 @@ export const Settings = (): JSX.Element => {
                                 <Col sm={9}>
                                     <Tab.Content>
                                         <Tab.Pane eventKey="change-password">
-                                            <ChangePassword setMessage={setMessage} />
+                                            <ChangePassword />
                                         </Tab.Pane>
                                         <Tab.Pane eventKey="mfa">
-                                            <Mfa setMessage={setMessage} />
+                                            <Mfa />
                                         </Tab.Pane>
                                     </Tab.Content>
                                 </Col>

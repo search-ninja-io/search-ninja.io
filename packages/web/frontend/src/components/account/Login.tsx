@@ -3,7 +3,6 @@ import { Redirect, Link } from 'react-router-dom';
 import { Form, Button, Jumbotron, Container } from 'react-bootstrap';
 import styled from 'styled-components';
 import { useSessionStore } from '../../state/SessionStore';
-import { MessageBanner } from '../banner/MessageBanner';
 
 const Styled = styled.div``;
 
@@ -23,19 +22,15 @@ const LoginForm = (): JSX.Element => {
     const [password, setPassword] = useState('');
     const [rememberDevice, setRememberDevice] = useState(false);
 
-    const [error, setError] = useState<Error>();
-
     const [, sessionActions] = useSessionStore();
 
     const onSubmitLogin = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
-        sessionActions.login(username, password, rememberDevice).catch((err) => setError(err));
+        sessionActions.login(username, password, rememberDevice).catch((err) => sessionActions.setError(err));
     };
 
     return (
         <Styled>
-            {error ? <MessageBanner errors={[error]} /> : <></>}
-
             <Container className="d-flex mt-5 justify-content-center">
                 <Jumbotron
                     className="m-0 p-5"
@@ -99,19 +94,16 @@ const LoginForm = (): JSX.Element => {
 
 const MfaForm = (): JSX.Element => {
     const [mfaCode, setMfaCode] = useState('');
-    const [error, setError] = useState<Error>();
 
     const [{ totpSession: tempSession }, sessionActions] = useSessionStore();
 
     const onSubmitMfa = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
-        sessionActions.sendSoftwareToken(mfaCode).catch((err) => setError(err));
+        sessionActions.sendSoftwareToken(mfaCode).catch((err) => sessionActions.setError(err));
     };
 
     return (
         <Styled>
-            {error ? <MessageBanner errors={[error]} /> : <></>}
-
             <Container className="d-flex mt-5 justify-content-center">
                 <Jumbotron
                     className="m-0 p-5"

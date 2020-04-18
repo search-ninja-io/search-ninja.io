@@ -1,10 +1,15 @@
 import React from 'react';
 import useGlobalHook from 'use-global-hook';
-import * as actions from './sessionactions/SessionActions';
+import * as actions from './SessionActions';
 import { Session } from '../auth/Auth';
 import { CognitoUser } from 'amazon-cognito-identity-js';
 
 export type SessionState = {
+    messages?: {
+        successes?: string[];
+        warnings?: string[];
+        errors?: Error[];
+    };
     session?: Session;
     totpSession?: {
         user: CognitoUser;
@@ -14,6 +19,11 @@ export type SessionState = {
 };
 
 const initialState: SessionState = {
+    messages: {
+        successes: [],
+        warnings: [],
+        errors: [],
+    },
     session: undefined,
     totpSession: undefined,
 };

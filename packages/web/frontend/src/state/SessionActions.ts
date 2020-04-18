@@ -1,4 +1,12 @@
 export type SessionActions = {
+    clearMessages: () => void;
+    setError: (error: Error) => void;
+    setErrors: (errors: Error[]) => void;
+    setWarning: (warning: string) => void;
+    setWarnings: (warings: string[]) => void;
+    setSuccess: (success: string) => void;
+    setSuccesses: (successes: string[]) => void;
+
     isUserLoggedIn: () => boolean;
     recoverSession: () => Promise<boolean>;
     login: (username: string, password: string, rememberDevice: boolean) => Promise<boolean>;
@@ -18,9 +26,10 @@ export type SessionActions = {
     signup: (email: string, name: string, password: string) => Promise<void>;
 };
 
-export * from './ChangePasswordActions';
-export * from './ForgetPasswordActions';
-export * from './LoginActions';
-export * from './LogoutActions';
-export * from './MfaActions';
-export * from './SignupActions';
+export * from './actions/MessageActions';
+export * from './actions/ChangePasswordActions';
+export * from './actions/ForgetPasswordActions';
+export * from './actions/LoginActions';
+export * from './actions/LogoutActions';
+export * from './actions/MfaActions';
+export * from './actions/SignupActions';

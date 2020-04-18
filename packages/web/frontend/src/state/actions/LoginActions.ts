@@ -1,7 +1,7 @@
 import { Store } from 'use-global-hook';
 import { SessionState } from '../SessionStore';
 import * as Auth from '../../auth/Auth';
-import { SessionActions } from './SessionActions';
+import { SessionActions } from '../SessionActions';
 
 export const isUserLoggedIn = (store: Store<SessionState, SessionActions>): boolean => {
     const { session } = store.state;
@@ -23,25 +23,18 @@ export const login = async (
             .then((loginResult) => {
                 if (loginResult.type === 'LoginResultTotpRequired') {
                     const { user, device, rememberDevice } = loginResult as Auth.LoginResultTotpRequired;
-                    console.log('SessionActions.login() - TOTP Required');
-                    store.setState({
-                        totpSession: {
-                            user: user,
-                            device: device,
-                            rememberDevice: rememberDevice,
-                        },
-                    });
+                    const state = {
+                        messages: undefined,
+                        totpSession: { user: user, device: device, rememberDevice: rememberDevice },
+                    };
+                    store.setState(state);
                     resolve(true);
                 } else {
                     const { session } = loginResult as Auth.LoginResult;
-                    console.log('SessionActions.login() - Success');
-                    store.setState({ session: session }, () => resolve(false));
+                    store.setState({ messages: undefined, session: session }, () => resolve(false));
                 }
             })
-            .catch((err) => {
-                console.error('SessionActions.login() - Error', err);
-                reject(err);
-            });
+            .catch((err) => reject(err));
     });
 };
 

@@ -6,7 +6,7 @@ export const Logout = (): JSX.Element => {
     const [{ session }, sessionActions] = useSessionStore();
 
     useEffect(() => {
-        sessionActions.logout().catch((err) => console.error(err));
+        sessionActions.logout().catch((err) => sessionActions.setError(err));
     }, [session, sessionActions]);
 
     if (!sessionActions.isUserLoggedIn()) {
