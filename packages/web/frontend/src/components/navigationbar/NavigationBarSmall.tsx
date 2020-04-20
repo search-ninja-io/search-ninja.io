@@ -27,26 +27,26 @@ export const NavigationBarSmall = (props: {
             <Navbar.Brand href="/">Search Ninja</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-                <Nav defaultActiveKey="/home" activeKey={location.pathname}>
+                <Nav defaultActiveKey="/" activeKey={location.pathname}>
                     <Container id="menu" className="w-100 mw-100 p-0 m-0 mt-3">
                         <Row className="w-100 mw-100 p-0 m-0 align-items-start">
                             <Col className="col-2">
                                 {session ? (
                                     <>
-                                        <LinkContainer to="/home">
-                                            <Nav.Link eventKey="/home">Home</Nav.Link>
+                                        <LinkContainer exact to="/">
+                                            <Nav.Link>Home</Nav.Link>
                                         </LinkContainer>
                                         <LinkContainer to="/search">
-                                            <Nav.Link eventKey="/search">Search</Nav.Link>
+                                            <Nav.Link>Search</Nav.Link>
                                         </LinkContainer>
                                         <LinkContainer to="/settings">
-                                            <Nav.Link eventKey="/settings">Settings</Nav.Link>
+                                            <Nav.Link>Settings</Nav.Link>
                                         </LinkContainer>
                                     </>
                                 ) : (
                                     <>
-                                        <LinkContainer to="/home">
-                                            <Nav.Link eventKey="/home">Home</Nav.Link>
+                                        <LinkContainer exact to="/">
+                                            <Nav.Link>Home</Nav.Link>
                                         </LinkContainer>
                                     </>
                                 )}
@@ -57,10 +57,10 @@ export const NavigationBarSmall = (props: {
                                 ) : (
                                     <>
                                         <LinkContainer to="/login">
-                                            <Nav.Link eventKey="/login">Login</Nav.Link>
+                                            <Nav.Link>Login</Nav.Link>
                                         </LinkContainer>
                                         <LinkContainer to="/signup">
-                                            <Nav.Link eventKey="/signup">Sign Up</Nav.Link>
+                                            <Nav.Link>Sign Up</Nav.Link>
                                         </LinkContainer>
                                     </>
                                 )}

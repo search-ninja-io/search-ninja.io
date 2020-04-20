@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { StaticContext } from 'react-router';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Form, Button, Jumbotron, Container } from 'react-bootstrap';
 import styled from 'styled-components';
@@ -6,10 +7,17 @@ import { useSessionStore } from '../../state/SessionStore';
 
 const Styled = styled.div``;
 
-export const Login = (props: {} & RouteComponentProps): JSX.Element => {
-    const [{ totpSession }, sessionActions] = useSessionStore();
+type LoginProps = RouteComponentProps<
+    {},
+    StaticContext,
+    { referrer: { pathname: string; search: string; hash: string } }
+>;
 
-    const LoginForm = (props: {} & RouteComponentProps): JSX.Element => {
+export const Login = (props: LoginProps): JSX.Element => {
+    const [{ totpSession }, sessionActions] = useSessionStore();
+    const { referrer } = props.location.state || { referrer: { pathname: '/' } };
+
+    const LoginForm = (props: RouteComponentProps): JSX.Element => {
         const [username, setUsername] = useState('');
         const [password, setPassword] = useState('');
         const [rememberDevice, setRememberDevice] = useState(false);
@@ -19,7 +27,7 @@ export const Login = (props: {} & RouteComponentProps): JSX.Element => {
             sessionActions
                 .login(username, password, rememberDevice)
                 .then((totpRequired) => {
-                    if (!totpRequired) props.history.push('/home');
+                    if (!totpRequired) props.history.push(referrer);
                 })
                 .catch((err) => sessionActions.setError(err));
         };
@@ -38,6 +46,7 @@ export const Login = (props: {} & RouteComponentProps): JSX.Element => {
                             <Form.Group controlId="formLoginEmail">
                                 <Form.Label>Email address</Form.Label>
                                 <Form.Control
+                                    autoFocus
                                     type="email"
                                     value={username}
                                     autoComplete="username"
@@ -87,14 +96,14 @@ export const Login = (props: {} & RouteComponentProps): JSX.Element => {
         );
     };
 
-    const MfaForm = (props: {} & RouteComponentProps): JSX.Element => {
+    const MfaForm = (props: RouteComponentProps): JSX.Element => {
         const [mfaCode, setMfaCode] = useState('');
 
         const onSubmitMfa = (event: React.FormEvent<HTMLFormElement>): void => {
             event.preventDefault();
             sessionActions
                 .sendSoftwareToken(mfaCode)
-                .then(() => props.history.push('/home'))
+                .then(() => props.history.push(referrer))
                 .catch((err) => sessionActions.setError(err));
         };
 

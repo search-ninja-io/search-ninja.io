@@ -16,6 +16,7 @@ export const NavigationBarLarge = (props: {
 }): JSX.Element => {
     const [{ session }] = props.sessionStore;
     const { location } = props.routeCompProps;
+
     return (
         <Navbar
             id="navbar-large"
@@ -26,26 +27,22 @@ export const NavigationBarLarge = (props: {
             expand="lg"
             className="d-none d-lg-block"
         >
-            <Nav defaultActiveKey="/home" activeKey={location.pathname}>
+            <Nav defaultActiveKey="/" activeKey={location.pathname}>
                 <Container className="col-8">
                     <Navbar.Brand href="/">Search Ninja</Navbar.Brand>
                     {session ? (
                         <>
-                            <LinkContainer to="/home">
-                                <Nav.Link eventKey="/home">Home</Nav.Link>
+                            <LinkContainer exact to="/">
+                                <Nav.Link>Home</Nav.Link>
                             </LinkContainer>
                             <LinkContainer to="/search">
-                                <Nav.Link className="mr-auto" eventKey="/search">
-                                    Search
-                                </Nav.Link>
+                                <Nav.Link className="mr-auto">Search</Nav.Link>
                             </LinkContainer>
                         </>
                     ) : (
                         <>
-                            <LinkContainer to="/home">
-                                <Nav.Link className="mr-auto" eventKey="/home">
-                                    Home
-                                </Nav.Link>
+                            <LinkContainer exact to="/">
+                                <Nav.Link className="mr-auto">Home</Nav.Link>
                             </LinkContainer>
                         </>
                     )}
@@ -58,10 +55,10 @@ export const NavigationBarLarge = (props: {
                     ) : (
                         <>
                             <LinkContainer to="/login">
-                                <Nav.Link eventKey="/login">Login</Nav.Link>
+                                <Nav.Link>Login</Nav.Link>
                             </LinkContainer>
                             <LinkContainer to="/signup">
-                                <Nav.Link eventKey="/signup">Sign Up</Nav.Link>
+                                <Nav.Link>Sign Up</Nav.Link>
                             </LinkContainer>
                         </>
                     )}

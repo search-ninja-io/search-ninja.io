@@ -9,7 +9,7 @@ export const Logout = (props: RouteComponentProps): JSX.Element => {
         if (sessionActions.isUserLoggedIn()) {
             sessionActions
                 .logout()
-                .then(() => props.history.push('/home'))
+                .then(() => props.history.push('/'))
                 .catch((err) => sessionActions.setError(err));
         }
     }, [sessionActions.isUserLoggedIn()]);

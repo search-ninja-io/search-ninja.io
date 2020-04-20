@@ -1,4 +1,5 @@
 import React from 'react';
+import { StaticContext } from 'react-router';
 import { Col, Container, Jumbotron, Nav, Row, Tab } from 'react-bootstrap';
 import styled from 'styled-components';
 import { ChangePassword } from './ChangePassword';
@@ -8,12 +9,27 @@ import { RouteComponentProps } from 'react-router-dom';
 
 const Styled = styled.div``;
 
-export const Settings = (props: {} & RouteComponentProps): JSX.Element => {
+type SettingsProps = RouteComponentProps<{ tab: string }, StaticContext, {}>;
+
+export const Settings = (props: SettingsProps): JSX.Element => {
     const [sessionState, sessionActions] = useSessionStore();
 
     const clearMessage = (): void => {
         sessionActions.clearMessages();
     };
+
+    enum SettingsTabs {
+        ChangePassword,
+        Mfa,
+    }
+
+    const SettingsUrls: { [key: string]: SettingsTabs } = {
+        changepassword: SettingsTabs.ChangePassword,
+        mfa: SettingsTabs.Mfa,
+    };
+
+    const tab = props.match.params.tab;
+    const defaultActiveKey = SettingsUrls[tab] ? SettingsUrls[tab] : SettingsTabs.ChangePassword;
 
     return (
         <Styled>
@@ -22,17 +38,17 @@ export const Settings = (props: {} & RouteComponentProps): JSX.Element => {
                     <h1>Settings</h1>
                     <hr />
                     <Container className="m-0 mt-2 p-0">
-                        <Tab.Container id="settings-nav" defaultActiveKey="change-password">
+                        <Tab.Container id="settings-nav" defaultActiveKey={defaultActiveKey}>
                             <Row>
                                 <Col sm={3}>
                                     <Nav variant="pills" className="flex-column">
                                         <Nav.Item>
-                                            <Nav.Link onClick={clearMessage} eventKey="change-password">
+                                            <Nav.Link onClick={clearMessage} eventKey={SettingsTabs.ChangePassword}>
                                                 Change Password
                                             </Nav.Link>
                                         </Nav.Item>
                                         <Nav.Item>
-                                            <Nav.Link onClick={clearMessage} eventKey="mfa">
+                                            <Nav.Link onClick={clearMessage} eventKey={SettingsTabs.Mfa}>
                                                 Multi Factor Authentication
                                             </Nav.Link>
                                         </Nav.Item>
@@ -40,10 +56,10 @@ export const Settings = (props: {} & RouteComponentProps): JSX.Element => {
                                 </Col>
                                 <Col sm={9}>
                                     <Tab.Content>
-                                        <Tab.Pane mountOnEnter eventKey="change-password">
+                                        <Tab.Pane mountOnEnter eventKey={SettingsTabs.ChangePassword}>
                                             <ChangePassword {...props} sessionStore={[sessionState, sessionActions]} />
                                         </Tab.Pane>
-                                        <Tab.Pane mountOnEnter eventKey="mfa">
+                                        <Tab.Pane mountOnEnter eventKey={SettingsTabs.Mfa}>
                                             <Mfa {...props} sessionStore={[sessionState, sessionActions]} />
                                         </Tab.Pane>
                                     </Tab.Content>
