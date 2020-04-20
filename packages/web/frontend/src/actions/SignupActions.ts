@@ -1,17 +1,21 @@
 import { Store } from 'use-global-hook';
-import { SessionState } from '../SessionStore';
-import * as Auth from '../../auth/Auth';
-import { SessionActions } from '../SessionActions';
+import { State } from '../store';
+import * as Auth from '../auth/Auth';
+import { Actions } from '.';
 import { logout } from './LogoutActions';
 
+export type SignupActions = {
+    signup: (email: string, name: string, password: string) => Promise<void>;
+};
+
 export const signup = async (
-    store: Store<SessionState, SessionActions>,
+    store: Store<State, Actions>,
     email: string,
     name: string,
     password: string,
 ): Promise<void> => {
     return new Promise<void>(async (resolve, reject) => {
-        console.log('SessionActions.signup()', email, name);
+        console.log('Actions.signup()', email, name);
         await Auth.signup(email, name, password)
             .then(() => logout(store))
             .then(() => resolve())

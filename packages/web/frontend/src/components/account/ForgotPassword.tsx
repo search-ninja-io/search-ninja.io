@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Container, Form, Jumbotron } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
-import { useSessionStore } from '../../state/SessionStore';
+import { useGlobalStore } from '../../store';
 
 const Styled = styled.div``;
 
@@ -15,15 +15,15 @@ export const ForgotPassword = (props: {} & RouteComponentProps): JSX.Element => 
     const [stage, setStage] = useState(Stage.Email);
     const [email, setEmail] = useState('');
 
-    const [, sessionActions] = useSessionStore();
+    const [, actions] = useGlobalStore();
 
     const ForgotPasswordEmail = (): JSX.Element => {
         const sendCode = (event: React.FormEvent<HTMLFormElement>): void => {
             event.preventDefault();
-            sessionActions
+            actions
                 .forgotPasswordCodeRequest(email)
                 .then(() => setStage(Stage.Code))
-                .catch((err) => sessionActions.setError(err));
+                .catch((err) => actions.setError(err));
         };
 
         return (
@@ -70,14 +70,14 @@ export const ForgotPassword = (props: {} & RouteComponentProps): JSX.Element => 
             event.preventDefault();
 
             if (newPassword !== confirmPassword) {
-                sessionActions.setError(new Error('Passwords are not the same'));
+                actions.setError(new Error('Passwords are not the same'));
                 return;
             }
 
-            sessionActions
+            actions
                 .forgotPasswordConfirm(email, code, newPassword)
                 .then(() => props.history.push('/login'))
-                .catch((err) => sessionActions.setError(err));
+                .catch((err) => actions.setError(err));
         };
         return (
             <Styled>

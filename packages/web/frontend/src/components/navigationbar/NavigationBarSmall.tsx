@@ -4,14 +4,14 @@ import { Nav, Navbar, Container, Row, Col } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import { Session } from '../../auth/Auth';
-import { SessionState } from '../../state/SessionStore';
-import { SessionActions } from '../../state/SessionActions';
+import { State } from '../../store';
+import { Actions } from '../../actions';
 
 export const NavigationBarSmall = (props: {
-    sessionStore: [SessionState, SessionActions];
+    store: [State, Actions];
     routeCompProps: RouteComponentProps;
 }): JSX.Element => {
-    const [{ session }] = props.sessionStore;
+    const [{ session }] = props.store;
     const { location } = props.routeCompProps;
     return (
         <Navbar

@@ -3,7 +3,7 @@ import { StaticContext } from 'react-router';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Form, Button, Jumbotron, Container } from 'react-bootstrap';
 import styled from 'styled-components';
-import { useSessionStore } from '../../state/SessionStore';
+import { useGlobalStore } from '../../store';
 
 const Styled = styled.div``;
 
@@ -14,7 +14,7 @@ type LoginProps = RouteComponentProps<
 >;
 
 export const Login = (props: LoginProps): JSX.Element => {
-    const [{ totpSession }, sessionActions] = useSessionStore();
+    const [{ totpSession }, actions] = useGlobalStore();
     const { referrer } = props.location.state || { referrer: { pathname: '/' } };
 
     const LoginForm = (props: RouteComponentProps): JSX.Element => {
@@ -24,12 +24,12 @@ export const Login = (props: LoginProps): JSX.Element => {
 
         const onSubmitLogin = (event: React.FormEvent<HTMLFormElement>): void => {
             event.preventDefault();
-            sessionActions
+            actions
                 .login(username, password, rememberDevice)
                 .then((totpRequired) => {
                     if (!totpRequired) props.history.push(referrer);
                 })
-                .catch((err) => sessionActions.setError(err));
+                .catch((err) => actions.setError(err));
         };
 
         return (
@@ -101,10 +101,10 @@ export const Login = (props: LoginProps): JSX.Element => {
 
         const onSubmitMfa = (event: React.FormEvent<HTMLFormElement>): void => {
             event.preventDefault();
-            sessionActions
+            actions
                 .sendSoftwareToken(mfaCode)
                 .then(() => props.history.push(referrer))
-                .catch((err) => sessionActions.setError(err));
+                .catch((err) => actions.setError(err));
         };
 
         return (

@@ -2,26 +2,26 @@ import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode.react';
 import { Form, Button } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
-import { SessionState } from '../../state/SessionStore';
-import { SessionActions } from '../../state/SessionActions';
+import { State } from '../../store';
+import { Actions } from '../../actions';
 
 enum DisplayMode {
     MfaDevice = 1,
     AddMfaDevice = 2,
 }
 
-export const Mfa = (props: { sessionStore: [SessionState, SessionActions] } & RouteComponentProps): JSX.Element => {
+export const Mfa = (props: { sessionStore: [State, Actions] } & RouteComponentProps): JSX.Element => {
     const [displayMode, setDisplayMode] = useState<DisplayMode>(DisplayMode.MfaDevice);
-    const [, sessionActions] = props.sessionStore;
+    const [, actions] = props.sessionStore;
     const [mfaDevice, setMfaDevice] = useState<string>();
 
     const MfaDevice = (props: {} & RouteComponentProps): JSX.Element => {
         useEffect(() => {
             if (!mfaDevice) {
-                sessionActions
+                actions
                     .fetchMfaDevice()
                     .then((mfaDevice) => setMfaDevice(mfaDevice))
-                    .catch((err) => sessionActions.setError(err));
+                    .catch((err) => actions.setError(err));
             }
         }, [mfaDevice]);
 
@@ -29,11 +29,11 @@ export const Mfa = (props: { sessionStore: [SessionState, SessionActions] } & Ro
             if (mfaDevice === undefined || mfaDevice.length === 0) {
                 setDisplayMode(DisplayMode.AddMfaDevice);
             } else {
-                sessionActions
+                actions
                     .disableMfaDevice()
-                    .then(() => sessionActions.setSuccess('Successfully disabled MFA device. Please login again.'))
+                    .then(() => actions.setSuccess('Successfully disabled MFA device. Please login again.'))
                     .then(() => props.history.push('/login'))
-                    .catch((err) => sessionActions.setError(err));
+                    .catch((err) => actions.setError(err));
             }
         };
 
@@ -68,25 +68,25 @@ export const Mfa = (props: { sessionStore: [SessionState, SessionActions] } & Ro
 
         useEffect(() => {
             if (!generatedQRCode) {
-                sessionActions
+                actions
                     .associateSoftwareToken()
                     .then((data) => setGeneratedQRCode(data))
-                    .catch((err) => sessionActions.setError(err));
+                    .catch((err) => actions.setError(err));
             }
-        }, [generatedQRCode, sessionActions]);
+        }, [generatedQRCode, actions]);
 
         const onSubmitVerify = (event: React.FormEvent<HTMLFormElement>): void => {
             event.preventDefault();
             if (!verificationCode || !deviceName) {
                 const error = new Error('Verification Code and/or Device Name are empty.');
-                sessionActions.setError(error);
+                actions.setError(error);
                 return;
             }
-            sessionActions
+            actions
                 .verifySoftwareToken(verificationCode, deviceName)
-                .then(() => sessionActions.setSuccess('Successfully added MFA device. Please login again.'))
+                .then(() => actions.setSuccess('Successfully added MFA device. Please login again.'))
                 .then(() => props.history.push('/login'))
-                .catch((err) => sessionActions.setError(err));
+                .catch((err) => actions.setError(err));
         };
 
         if (!generatedQRCode) {

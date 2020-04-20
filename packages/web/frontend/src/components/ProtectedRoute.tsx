@@ -12,9 +12,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = (props: ProtectedRo
     }
 
     const referrer = useLocation();
-
-    console.log('Referrer', referrer);
-
     const redirectPath = props.authenticationPath;
     const renderComponent = (): JSX.Element => (
         <Redirect to={{ pathname: redirectPath, state: { referrer: referrer } }} />

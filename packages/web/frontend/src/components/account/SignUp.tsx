@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Container, Jumbotron, Form, Button } from 'react-bootstrap';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
-import { useSessionStore } from '../../state/SessionStore';
+import { useGlobalStore } from '../../store';
 
 const Styled = styled.div``;
 
@@ -13,14 +13,14 @@ export const SignUp = (props: {} & RouteComponentProps): JSX.Element => {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
 
-    const [, sessionActions] = useSessionStore();
+    const [, actions] = useGlobalStore();
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
-        sessionActions
+        actions
             .signup(email, name, password)
             .then(() => props.history.push('/login'))
-            .catch((err) => sessionActions.setError(err));
+            .catch((err) => actions.setError(err));
     };
 
     return (

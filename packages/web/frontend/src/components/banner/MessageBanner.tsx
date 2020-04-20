@@ -1,13 +1,13 @@
 import React from 'react';
 import { Alert } from 'react-bootstrap';
-import { useSessionStore } from '../../state/SessionStore';
+import { useGlobalStore } from '../../store';
 
 export const MessageBanner = (): JSX.Element => {
-    const [sessionState] = useSessionStore();
+    const [state] = useGlobalStore();
 
-    const successes = sessionState.messages?.successes ? sessionState.messages.successes : [];
-    const warnings = sessionState.messages?.warnings ? sessionState.messages.warnings : [];
-    const errors = sessionState.messages?.errors ? sessionState.messages.errors : [];
+    const successes = state.messages?.successes ? state.messages.successes : [];
+    const warnings = state.messages?.warnings ? state.messages.warnings : [];
+    const errors = state.messages?.errors ? state.messages.errors : [];
 
     return (
         <>

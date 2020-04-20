@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react';
-import { useSessionStore } from '../../state/SessionStore';
+import { useGlobalStore } from '../../store';
 import { RouteComponentProps } from 'react-router-dom';
 
 export const Logout = (props: RouteComponentProps): JSX.Element => {
-    const [, sessionActions] = useSessionStore();
+    const [, actions] = useGlobalStore();
 
     useEffect(() => {
-        if (sessionActions.isUserLoggedIn()) {
-            sessionActions
+        if (actions.isUserLoggedIn()) {
+            actions
                 .logout()
                 .then(() => props.history.push('/'))
-                .catch((err) => sessionActions.setError(err));
+                .catch((err) => actions.setError(err));
         }
-    }, [sessionActions.isUserLoggedIn()]);
+    }, [actions.isUserLoggedIn()]);
 
     return (
         <>

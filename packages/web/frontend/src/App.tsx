@@ -5,26 +5,25 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import { NavigationBar } from './components/navigationbar/NavigationBar';
-
 import { Login } from './components/account/Login';
 import { Logout } from './components/account/Logout';
 import { ForgotPassword } from './components/account/ForgotPassword';
 import { SignUp } from './components/account/SignUp';
 import { Settings } from './components/account/Settings';
-
 import { Home } from './components/home/Home';
 import { Search } from './components/search/Search';
-
+import { MessageBanner } from './components/banner/MessageBanner';
 import { NotFound } from './components/NotFound';
-import MessageBanner from './components/banner/MessageBanner';
-import { useSessionStore } from './state/SessionStore';
-import ProtectedRoute, { ProtectedRouteProps } from './components/ProtectedRoute';
+
+import { useGlobalStore } from './store';
+
+import { ProtectedRoute, ProtectedRouteProps } from './components/ProtectedRoute';
 
 const App: React.FC = () => {
-    const [{ initialized }, sessionActions] = useSessionStore();
+    const [{ initialized }, actions] = useGlobalStore();
 
     const defaultProps: ProtectedRouteProps = {
-        isAuthenticated: sessionActions.isUserLoggedIn,
+        isAuthenticated: actions.isUserLoggedIn,
         authenticationPath: '/login',
     };
 

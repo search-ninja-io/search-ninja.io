@@ -1,16 +1,20 @@
 import { Store } from 'use-global-hook';
-import { SessionState } from '../SessionStore';
-import * as Auth from '../../auth/Auth';
-import { SessionActions } from '../SessionActions';
+import { State } from '../store';
+import * as Auth from '../auth/Auth';
 import { logout } from './LogoutActions';
+import { Actions } from '.';
+
+export type ChangePasswordActions = {
+    changePassword: (password: string, newPassword: string) => Promise<boolean>;
+};
 
 export const changePassword = async (
-    store: Store<SessionState, SessionActions>,
+    store: Store<State, Actions>,
     password: string,
     newPassword: string,
 ): Promise<boolean> => {
     return new Promise<boolean>(async (resolve, reject) => {
-        console.log('SessionActions.changePassword()');
+        console.log('Actions.changePassword()');
         const { session } = store.state;
         if (!session) reject('No user is logged in to change password.');
         else {

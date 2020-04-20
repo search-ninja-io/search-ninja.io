@@ -7,14 +7,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 import { Session } from '../../auth/Auth';
-import { SessionActions } from '../../state/SessionActions';
-import { SessionState } from '../../state/SessionStore';
+import { Actions } from '../../actions';
+import { State } from '../../store';
 
 export const NavigationBarLarge = (props: {
-    sessionStore: [SessionState, SessionActions];
+    store: [State, Actions];
     routeCompProps: RouteComponentProps;
 }): JSX.Element => {
-    const [{ session }] = props.sessionStore;
+    const [{ session }] = props.store;
     const { location } = props.routeCompProps;
 
     return (

@@ -3,7 +3,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { useSessionStore } from '../../state/SessionStore';
+import { useGlobalStore } from '../../store';
 
 import { NavigationBarLarge } from './NavigationBarLarge';
 import { NavigationBarSmall } from './NavigationBarSmall';
@@ -49,11 +49,11 @@ const Styled = styled.div`
 
 export const NavigationBar = withRouter(
     (props: RouteComponentProps): JSX.Element => {
-        const [sessionState, sessionActions] = useSessionStore();
+        const [state, actions] = useGlobalStore();
         return (
             <Styled>
-                <NavigationBarLarge sessionStore={[sessionState, sessionActions]} routeCompProps={props} />
-                <NavigationBarSmall sessionStore={[sessionState, sessionActions]} routeCompProps={props} />
+                <NavigationBarLarge store={[state, actions]} routeCompProps={props} />
+                <NavigationBarSmall store={[state, actions]} routeCompProps={props} />
             </Styled>
         );
     },

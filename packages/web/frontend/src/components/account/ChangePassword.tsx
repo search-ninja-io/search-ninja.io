@@ -1,27 +1,21 @@
 import React, { useState } from 'react';
-import { SessionState } from '../../state/SessionStore';
+import { State } from '../../store';
 import { Form, Button } from 'react-bootstrap';
-import { SessionActions } from '../../state/SessionActions';
+import { Actions } from '../../actions';
 import { RouteComponentProps } from 'react-router-dom';
 
-export const ChangePassword = (
-    props: { sessionStore: [SessionState, SessionActions] } & RouteComponentProps,
-): JSX.Element => {
+export const ChangePassword = (props: { sessionStore: [State, Actions] } & RouteComponentProps): JSX.Element => {
     const [password, setPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
-    const [{ session }, sessionActions] = props.sessionStore;
+    const [{ session }, actions] = props.sessionStore;
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
 
-        if (!sessionActions.isUserLoggedIn() || !session) {
-            return;
-        }
-
         if (newPassword !== confirmNewPassword) {
-            sessionActions.setError(new Error('New Password and Confirm Password are not the same.'));
+            actions.setError(new Error('New Password and Confirm Password are not the same.'));
             return;
         }
 
@@ -29,11 +23,11 @@ export const ChangePassword = (
         setNewPassword('');
         setConfirmNewPassword('');
 
-        sessionActions
+        actions
             .changePassword(password, newPassword)
-            .then(() => sessionActions.setSuccess('Successfully changed password. Please login again.'))
+            .then(() => actions.setSuccess('Successfully changed password. Please login again.'))
             .then(() => props.history.push('/login'))
-            .catch((err) => sessionActions.setError(err));
+            .catch((err) => actions.setError(err));
     };
 
     return (

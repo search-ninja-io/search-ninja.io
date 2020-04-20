@@ -1,12 +1,20 @@
 import { Store } from 'use-global-hook';
-import { SessionState } from '../SessionStore';
-import * as Auth from '../../auth/Auth';
-import { SessionActions } from '../SessionActions';
+import { State } from '../store';
+import * as Auth from '../auth/Auth';
+import { Actions } from '.';
 import { logout } from './LogoutActions';
 
-export const sendSoftwareToken = async (store: Store<SessionState, SessionActions>, mfaCode: string): Promise<void> => {
+export type MfaActions = {
+    fetchMfaDevice: () => Promise<string>;
+    sendSoftwareToken: (mfaCode: string) => Promise<void>;
+    associateSoftwareToken: () => Promise<string>;
+    verifySoftwareToken: (verificationCode: string, deviceName: string) => Promise<void>;
+    disableMfaDevice: () => Promise<void>;
+};
+
+export const sendSoftwareToken = async (store: Store<State, Actions>, mfaCode: string): Promise<void> => {
     return new Promise<void>(async (resolve, reject) => {
-        console.log('SessionActions.sendSoftwareToken()');
+        console.log('Actions.sendSoftwareToken()');
         if (!store.state.totpSession) {
             reject('Temporary credentials cannot be extracted, please try again.');
             return;
@@ -27,8 +35,8 @@ export const sendSoftwareToken = async (store: Store<SessionState, SessionAction
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const fetchMfaDevice = async (store: Store<SessionState, SessionActions>): Promise<string> => {
-    console.log('SessionActions.fetchMfaDevice()');
+export const fetchMfaDevice = async (store: Store<State, Actions>): Promise<string> => {
+    console.log('Actions.fetchMfaDevice()');
     return new Promise<string>(async (resolve, reject) => {
         await Auth.getMfaDevice()
             .then((mfaDevice) => resolve(mfaDevice))
@@ -37,9 +45,9 @@ export const fetchMfaDevice = async (store: Store<SessionState, SessionActions>)
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const associateSoftwareToken = async (store: Store<SessionState, SessionActions>): Promise<string> => {
+export const associateSoftwareToken = async (store: Store<State, Actions>): Promise<string> => {
     return new Promise<string>(async (resolve, reject) => {
-        console.log('SessionActions.associateSoftwareToken()');
+        console.log('Actions.associateSoftwareToken()');
         await Auth.associateSoftwareToken()
             .then((data) => resolve(data))
             .catch((err) => reject(err));
@@ -47,12 +55,12 @@ export const associateSoftwareToken = async (store: Store<SessionState, SessionA
 };
 
 export const verifySoftwareToken = async (
-    store: Store<SessionState, SessionActions>,
+    store: Store<State, Actions>,
     verificationCode: string,
     deviceName: string,
 ): Promise<void> => {
     return new Promise<void>(async (resolve, reject) => {
-        console.log('SessionActions.verifySoftwareToken()');
+        console.log('Actions.verifySoftwareToken()');
         await Auth.verifySoftwareToken(verificationCode, deviceName)
             .then(() => logout(store))
             .then(() => resolve())
@@ -60,9 +68,9 @@ export const verifySoftwareToken = async (
     });
 };
 
-export const disableMfaDevice = async (store: Store<SessionState, SessionActions>): Promise<void> => {
+export const disableMfaDevice = async (store: Store<State, Actions>): Promise<void> => {
     return new Promise<void>(async (resolve, reject) => {
-        console.log('SessionActions.disableMfaDevice()');
+        console.log('Actions.disableMfaDevice()');
         await Auth.disableMfaDevice()
             .then(() => logout(store))
             .then(() => resolve())

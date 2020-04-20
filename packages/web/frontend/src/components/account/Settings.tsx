@@ -4,7 +4,7 @@ import { Col, Container, Jumbotron, Nav, Row, Tab } from 'react-bootstrap';
 import styled from 'styled-components';
 import { ChangePassword } from './ChangePassword';
 import { Mfa } from './Mfa';
-import { useSessionStore } from '../../state/SessionStore';
+import { useGlobalStore } from '../../store';
 import { RouteComponentProps } from 'react-router-dom';
 
 const Styled = styled.div``;
@@ -12,10 +12,10 @@ const Styled = styled.div``;
 type SettingsProps = RouteComponentProps<{ tab: string }, StaticContext, {}>;
 
 export const Settings = (props: SettingsProps): JSX.Element => {
-    const [sessionState, sessionActions] = useSessionStore();
+    const [state, actions] = useGlobalStore();
 
     const clearMessage = (): void => {
-        sessionActions.clearMessages();
+        actions.clearMessages();
     };
 
     enum SettingsTabs {
@@ -57,10 +57,10 @@ export const Settings = (props: SettingsProps): JSX.Element => {
                                 <Col sm={9}>
                                     <Tab.Content>
                                         <Tab.Pane mountOnEnter eventKey={SettingsTabs.ChangePassword}>
-                                            <ChangePassword {...props} sessionStore={[sessionState, sessionActions]} />
+                                            <ChangePassword {...props} sessionStore={[state, actions]} />
                                         </Tab.Pane>
                                         <Tab.Pane mountOnEnter eventKey={SettingsTabs.Mfa}>
-                                            <Mfa {...props} sessionStore={[sessionState, sessionActions]} />
+                                            <Mfa {...props} sessionStore={[state, actions]} />
                                         </Tab.Pane>
                                     </Tab.Content>
                                 </Col>
