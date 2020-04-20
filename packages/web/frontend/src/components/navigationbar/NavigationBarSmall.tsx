@@ -4,9 +4,14 @@ import { Nav, Navbar, Container, Row, Col } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import { Session } from '../../auth/Auth';
+import { SessionState } from '../../state/SessionStore';
+import { SessionActions } from '../../state/SessionActions';
 
-export const NavigationBarSmall = (props: { session?: Session; routeCompProps: RouteComponentProps }): JSX.Element => {
-    const { session } = props;
+export const NavigationBarSmall = (props: {
+    sessionStore: [SessionState, SessionActions];
+    routeCompProps: RouteComponentProps;
+}): JSX.Element => {
+    const [{ session }] = props.sessionStore;
     const { location } = props.routeCompProps;
     return (
         <Navbar
@@ -48,7 +53,7 @@ export const NavigationBarSmall = (props: { session?: Session; routeCompProps: R
                             </Col>
                             <Col className="col-10 text-right">
                                 {session ? (
-                                    <UserAccountInfo {...session} />
+                                    <UserAccountInfo session={session} />
                                 ) : (
                                     <>
                                         <LinkContainer to="/login">
@@ -68,14 +73,14 @@ export const NavigationBarSmall = (props: { session?: Session; routeCompProps: R
     );
 };
 
-const UserAccountInfo = (session: Session): JSX.Element => {
+const UserAccountInfo = (props: { session: Session }): JSX.Element => {
     return (
         <>
             <Nav.Item id="userlabel" className="font-weight-bold m-0 p-0 pt-2">
-                {session.userAttributes['name']}
+                {props.session.userAttributes['name']}
             </Nav.Item>
             <Nav.Item id="emaillabel" className="font-weight-light m-0 p-0 pb-2">
-                {session.userAttributes['email']}
+                {props.session.userAttributes['email']}
             </Nav.Item>
             <LinkContainer to="/logout">
                 <Nav.Link eventKey="/logout" className="m-0 p-0 pt-4 pb-2">

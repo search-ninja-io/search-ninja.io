@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode.react';
 import { Form, Button } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
-import { useSessionStore } from '../../state/SessionStore';
+import { RouteComponentProps } from 'react-router-dom';
+import { SessionState } from '../../state/SessionStore';
+import { SessionActions } from '../../state/SessionActions';
 
 enum DisplayMode {
     MfaDevice = 1,
     AddMfaDevice = 2,
 }
 
-export const Mfa = (): JSX.Element => {
+export const Mfa = (props: { sessionStore: [SessionState, SessionActions] } & RouteComponentProps): JSX.Element => {
     const [displayMode, setDisplayMode] = useState<DisplayMode>(DisplayMode.MfaDevice);
-    const [, sessionActions] = useSessionStore();
+    const [, sessionActions] = props.sessionStore;
+    const [mfaDevice, setMfaDevice] = useState<string>();
 
-    const MfaDevice = (): JSX.Element => {
-        const [mfaDevice, setMfaDevice] = useState<string>();
-
+    const MfaDevice = (props: {} & RouteComponentProps): JSX.Element => {
         useEffect(() => {
             if (!mfaDevice) {
                 sessionActions
@@ -23,7 +23,7 @@ export const Mfa = (): JSX.Element => {
                     .then((mfaDevice) => setMfaDevice(mfaDevice))
                     .catch((err) => sessionActions.setError(err));
             }
-        }, [mfaDevice, sessionActions]);
+        }, [mfaDevice]);
 
         const onChangeMfaEnabled = (): void => {
             if (mfaDevice === undefined || mfaDevice.length === 0) {
@@ -32,9 +32,14 @@ export const Mfa = (): JSX.Element => {
                 sessionActions
                     .disableMfaDevice()
                     .then(() => sessionActions.setSuccess('Successfully disabled MFA device. Please login again.'))
+                    .then(() => props.history.push('/login'))
                     .catch((err) => sessionActions.setError(err));
             }
         };
+
+        if (!mfaDevice) {
+            return <p>Loading...</p>;
+        }
 
         return (
             <Form className="mt-3">
@@ -54,10 +59,12 @@ export const Mfa = (): JSX.Element => {
         );
     };
 
-    const AddMfaDevice = (): JSX.Element => {
+    const AddMfaDevice = (props: {} & RouteComponentProps): JSX.Element => {
         const [generatedQRCode, setGeneratedQRCode] = useState<string>();
         const [verificationCode, setVerificationCode] = useState<string>();
         const [deviceName, setDeviceName] = useState<string>();
+
+        console.log('AddMfaDevice');
 
         useEffect(() => {
             if (!generatedQRCode) {
@@ -78,6 +85,7 @@ export const Mfa = (): JSX.Element => {
             sessionActions
                 .verifySoftwareToken(verificationCode, deviceName)
                 .then(() => sessionActions.setSuccess('Successfully added MFA device. Please login again.'))
+                .then(() => props.history.push('/login'))
                 .catch((err) => sessionActions.setError(err));
         };
 
@@ -127,15 +135,10 @@ export const Mfa = (): JSX.Element => {
         );
     };
 
-    if (!sessionActions.isUserLoggedIn()) {
-        return <Redirect to="/login" />;
-    } else if (displayMode === DisplayMode.MfaDevice) {
-        return <MfaDevice />;
-    } else if (displayMode === DisplayMode.AddMfaDevice) {
-        return <AddMfaDevice />;
+    if (displayMode === DisplayMode.AddMfaDevice) {
+        return <AddMfaDevice {...props} />;
     }
-
-    return <p>Unknow Display Mode: {displayMode}</p>;
+    return <MfaDevice {...props} />;
 };
 
 export default Mfa;

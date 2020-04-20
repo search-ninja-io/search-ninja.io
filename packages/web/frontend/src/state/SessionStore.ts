@@ -1,10 +1,11 @@
 import React from 'react';
-import useGlobalHook from 'use-global-hook';
+import useGlobalHook, { Store } from 'use-global-hook';
 import * as actions from './SessionActions';
-import { Session } from '../auth/Auth';
+import { Session, getSession } from '../auth/Auth';
 import { CognitoUser } from 'amazon-cognito-identity-js';
 
 export type SessionState = {
+    initialized?: boolean;
     messages?: {
         successes?: string[];
         warnings?: string[];
@@ -19,6 +20,7 @@ export type SessionState = {
 };
 
 const initialState: SessionState = {
+    initialized: false,
     messages: {
         successes: [],
         warnings: [],
@@ -28,4 +30,15 @@ const initialState: SessionState = {
     totpSession: undefined,
 };
 
-export const useSessionStore = useGlobalHook<SessionState, actions.SessionActions>(React, initialState, actions);
+export const useSessionStore = useGlobalHook<SessionState, actions.SessionActions>(
+    React,
+    initialState,
+    actions,
+    async (store: Store<SessionState, actions.SessionActions>) => {
+        console.log('SessionStore.Initializer');
+        const session = await getSession()
+            .then((session) => session)
+            .catch(() => undefined);
+        store.setState({ initialized: true, session: session });
+    },
+);

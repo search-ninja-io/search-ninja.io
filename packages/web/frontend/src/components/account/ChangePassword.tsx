@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { useSessionStore } from '../../state/SessionStore';
+import { SessionState } from '../../state/SessionStore';
 import { Form, Button } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
+import { SessionActions } from '../../state/SessionActions';
+import { RouteComponentProps } from 'react-router-dom';
 
-export const ChangePassword = (): JSX.Element => {
+export const ChangePassword = (
+    props: { sessionStore: [SessionState, SessionActions] } & RouteComponentProps,
+): JSX.Element => {
     const [password, setPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
-    const [{ session }, sessionActions] = useSessionStore();
+    const [{ session }, sessionActions] = props.sessionStore;
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
@@ -29,12 +32,9 @@ export const ChangePassword = (): JSX.Element => {
         sessionActions
             .changePassword(password, newPassword)
             .then(() => sessionActions.setSuccess('Successfully changed password. Please login again.'))
+            .then(() => props.history.push('/login'))
             .catch((err) => sessionActions.setError(err));
     };
-
-    if (!session) {
-        return <Redirect to="/login" />;
-    }
 
     return (
         <>

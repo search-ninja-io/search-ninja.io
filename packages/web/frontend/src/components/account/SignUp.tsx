@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Container, Jumbotron, Form, Button } from 'react-bootstrap';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
 import { useSessionStore } from '../../state/SessionStore';
 
 const Styled = styled.div``;
 
-export const SignUp = (): JSX.Element => {
+// TODO: Implement own Registration Confirm page
+
+export const SignUp = (props: {} & RouteComponentProps): JSX.Element => {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
-
-    const [signupSuccess, setSignupSuccess] = useState(false);
 
     const [, sessionActions] = useSessionStore();
 
@@ -19,13 +19,9 @@ export const SignUp = (): JSX.Element => {
         event.preventDefault();
         sessionActions
             .signup(email, name, password)
-            .then(() => setSignupSuccess(true))
+            .then(() => props.history.push('/login'))
             .catch((err) => sessionActions.setError(err));
     };
-
-    if (signupSuccess) {
-        return <Redirect to="/login" />;
-    }
 
     return (
         <Styled>

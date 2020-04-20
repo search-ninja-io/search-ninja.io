@@ -47,7 +47,7 @@ module.exports = (env, argv) => {
         output: {
             path: path.join(__dirname, '/dist'),
             filename: isEnvProduction ? '[name].[contenthash].js' : '[name].[hash].js',
-            publicPath: '',
+            publicPath: '/',
         },
 
         resolve: {

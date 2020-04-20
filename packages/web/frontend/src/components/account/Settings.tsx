@@ -3,17 +3,13 @@ import { Col, Container, Jumbotron, Nav, Row, Tab } from 'react-bootstrap';
 import styled from 'styled-components';
 import { ChangePassword } from './ChangePassword';
 import { Mfa } from './Mfa';
-import { Redirect } from 'react-router-dom';
 import { useSessionStore } from '../../state/SessionStore';
+import { RouteComponentProps } from 'react-router-dom';
 
 const Styled = styled.div``;
 
-export const Settings = (): JSX.Element => {
-    const [, sessionActions] = useSessionStore();
-
-    if (!sessionActions.isUserLoggedIn()) {
-        return <Redirect to="/login" />;
-    }
+export const Settings = (props: {} & RouteComponentProps): JSX.Element => {
+    const [sessionState, sessionActions] = useSessionStore();
 
     const clearMessage = (): void => {
         sessionActions.clearMessages();
@@ -44,11 +40,11 @@ export const Settings = (): JSX.Element => {
                                 </Col>
                                 <Col sm={9}>
                                     <Tab.Content>
-                                        <Tab.Pane eventKey="change-password">
-                                            <ChangePassword />
+                                        <Tab.Pane mountOnEnter eventKey="change-password">
+                                            <ChangePassword {...props} sessionStore={[sessionState, sessionActions]} />
                                         </Tab.Pane>
-                                        <Tab.Pane eventKey="mfa">
-                                            <Mfa />
+                                        <Tab.Pane mountOnEnter eventKey="mfa">
+                                            <Mfa {...props} sessionStore={[sessionState, sessionActions]} />
                                         </Tab.Pane>
                                     </Tab.Content>
                                 </Col>

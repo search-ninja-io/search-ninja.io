@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Container, Form, Jumbotron } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
 import { useSessionStore } from '../../state/SessionStore';
 
@@ -9,55 +9,33 @@ const Styled = styled.div``;
 enum Stage {
     Email = 1,
     Code = 2,
-    Changed = 3,
 }
 
-export const ForgotPassword = (): JSX.Element => {
+export const ForgotPassword = (props: {} & RouteComponentProps): JSX.Element => {
     const [stage, setStage] = useState(Stage.Email);
     const [email, setEmail] = useState('');
-    const [code, setCode] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
 
     const [, sessionActions] = useSessionStore();
 
-    const sendCode = (event: React.FormEvent<HTMLFormElement>): void => {
-        event.preventDefault();
-        sessionActions
-            .forgotPasswordCodeRequest(email)
-            .then(() => setStage(Stage.Code))
-            .catch((err) => sessionActions.setError(err));
-    };
+    const ForgotPasswordEmail = (): JSX.Element => {
+        const sendCode = (event: React.FormEvent<HTMLFormElement>): void => {
+            event.preventDefault();
+            sessionActions
+                .forgotPasswordCodeRequest(email)
+                .then(() => setStage(Stage.Code))
+                .catch((err) => sessionActions.setError(err));
+        };
 
-    const resetPassword = (event: React.FormEvent<HTMLFormElement>): void => {
-        event.preventDefault();
-
-        if (newPassword !== confirmPassword) {
-            sessionActions.setError(new Error('Passwords are not the same'));
-            return;
-        }
-
-        sessionActions
-            .forgotPasswordConfirm(email, code, newPassword)
-            .then(() => setStage(Stage.Changed))
-            .catch((err) => sessionActions.setError(err));
-    };
-
-    if (stage === Stage.Changed) {
-        return <Redirect to="/login" />;
-    }
-
-    return (
-        <Styled>
-            <Container className="d-flex mt-5 justify-content-center">
-                <Jumbotron
-                    className="m-0 p-5"
-                    style={{
-                        width: '400px',
-                    }}
-                >
-                    <h1>Forgot Password</h1>
-                    {stage === Stage.Email && (
+        return (
+            <Styled>
+                <Container className="d-flex mt-5 justify-content-center">
+                    <Jumbotron
+                        className="m-0 p-5"
+                        style={{
+                            width: '400px',
+                        }}
+                    >
+                        <h1>Forgot Password</h1>
                         <Form onSubmit={sendCode}>
                             <Form.Group controlId="formBasicEmail">
                                 <Form.Label>Email address</Form.Label>
@@ -77,8 +55,40 @@ export const ForgotPassword = (): JSX.Element => {
                                 </Button>
                             </Form.Group>
                         </Form>
-                    )}
-                    {stage === Stage.Code && (
+                    </Jumbotron>
+                </Container>
+            </Styled>
+        );
+    };
+
+    const ForgotPasswordCode = (props: {} & RouteComponentProps): JSX.Element => {
+        const [code, setCode] = useState('');
+        const [newPassword, setNewPassword] = useState('');
+        const [confirmPassword, setConfirmPassword] = useState('');
+
+        const resetPassword = (event: React.FormEvent<HTMLFormElement>): void => {
+            event.preventDefault();
+
+            if (newPassword !== confirmPassword) {
+                sessionActions.setError(new Error('Passwords are not the same'));
+                return;
+            }
+
+            sessionActions
+                .forgotPasswordConfirm(email, code, newPassword)
+                .then(() => props.history.push('/login'))
+                .catch((err) => sessionActions.setError(err));
+        };
+        return (
+            <Styled>
+                <Container className="d-flex mt-5 justify-content-center">
+                    <Jumbotron
+                        className="m-0 p-5"
+                        style={{
+                            width: '400px',
+                        }}
+                    >
+                        <h1>Forgot Password</h1>
                         <Form onSubmit={resetPassword}>
                             <Form.Group controlId="formBasicEmail">
                                 <Form.Label>Code</Form.Label>
@@ -122,11 +132,17 @@ export const ForgotPassword = (): JSX.Element => {
                                 </Button>
                             </Form.Group>
                         </Form>
-                    )}
-                </Jumbotron>
-            </Container>
-        </Styled>
-    );
+                    </Jumbotron>
+                </Container>
+            </Styled>
+        );
+    };
+
+    if (stage === Stage.Email) {
+        return <ForgotPasswordEmail />;
+    } else {
+        return <ForgotPasswordCode {...props} />;
+    }
 };
 
 export default ForgotPassword;

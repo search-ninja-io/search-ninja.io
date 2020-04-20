@@ -3,7 +3,6 @@ import { SessionState } from '../SessionStore';
 import * as Auth from '../../auth/Auth';
 import { SessionActions } from '../SessionActions';
 import { logout } from './LogoutActions';
-import { setSuccess } from './MessageActions';
 
 export const changePassword = async (
     store: Store<SessionState, SessionActions>,

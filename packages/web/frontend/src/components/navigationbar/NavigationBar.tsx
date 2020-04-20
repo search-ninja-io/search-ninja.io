@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -47,21 +47,16 @@ const Styled = styled.div`
     }
 `;
 
-export const NavigationBar = withRouter((props: RouteComponentProps) => {
-    const [{ session }, sessionActions] = useSessionStore();
-
-    useEffect(() => {
-        if (!session) {
-            sessionActions.recoverSession().catch((err) => console.error('Session Recovery Error', err));
-        }
-    }, [session, sessionActions]);
-
-    return (
-        <Styled>
-            <NavigationBarLarge session={session} routeCompProps={props} />
-            <NavigationBarSmall session={session} routeCompProps={props} />
-        </Styled>
-    );
-});
+export const NavigationBar = withRouter(
+    (props: RouteComponentProps): JSX.Element => {
+        const [sessionState, sessionActions] = useSessionStore();
+        return (
+            <Styled>
+                <NavigationBarLarge sessionStore={[sessionState, sessionActions]} routeCompProps={props} />
+                <NavigationBarSmall sessionStore={[sessionState, sessionActions]} routeCompProps={props} />
+            </Styled>
+        );
+    },
+);
 
 export default NavigationBar;

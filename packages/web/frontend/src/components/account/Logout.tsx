@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react';
 import { useSessionStore } from '../../state/SessionStore';
-import { Redirect } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 
-export const Logout = (): JSX.Element => {
-    const [{ session }, sessionActions] = useSessionStore();
+export const Logout = (props: RouteComponentProps): JSX.Element => {
+    const [, sessionActions] = useSessionStore();
 
     useEffect(() => {
-        sessionActions.logout().catch((err) => sessionActions.setError(err));
-    }, [session, sessionActions]);
-
-    if (!sessionActions.isUserLoggedIn()) {
-        return <Redirect to="/home" />;
-    }
+        if (sessionActions.isUserLoggedIn()) {
+            sessionActions
+                .logout()
+                .then(() => props.history.push('/home'))
+                .catch((err) => sessionActions.setError(err));
+        }
+    }, [sessionActions.isUserLoggedIn()]);
 
     return (
         <>

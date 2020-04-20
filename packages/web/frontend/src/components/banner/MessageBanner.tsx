@@ -3,11 +3,11 @@ import { Alert } from 'react-bootstrap';
 import { useSessionStore } from '../../state/SessionStore';
 
 export const MessageBanner = (): JSX.Element => {
-    const [session] = useSessionStore();
+    const [sessionState] = useSessionStore();
 
-    const successes = session.messages?.successes ? session.messages.successes : [];
-    const warnings = session.messages?.warnings ? session.messages.warnings : [];
-    const errors = session.messages?.errors ? session.messages.errors : [];
+    const successes = sessionState.messages?.successes ? sessionState.messages.successes : [];
+    const warnings = sessionState.messages?.warnings ? sessionState.messages.warnings : [];
+    const errors = sessionState.messages?.errors ? sessionState.messages.errors : [];
 
     return (
         <>

@@ -44,8 +44,7 @@
   ],
   "liveSassCompile.settings.generateMap": false,
 "color-highlight.markerType": "dot-before",
-  "todo-tree.highlights.enabled": false,
-  "editor.fontSize": 14,
+"todo-tree.highlights.enabled": false,
   "better-comments.tags": [
     {
       "tag": "!",
@@ -87,5 +86,8 @@
   "editor.fontFamily": "Fira Code",
   "editor.fontLigatures": true,
   "eslint.alwaysShowStatus": true,
-  "eslint.workingDirectories": ["./packages/*/"]
+"eslint.workingDirectories": [
+    "./packages/*/"
+],
+"todo-tree.filtering.useBuiltInExcludes": "file excludes"
 }

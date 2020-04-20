@@ -5,15 +5,15 @@ import { SessionActions } from '../SessionActions';
 import { logout } from './LogoutActions';
 
 export const sendSoftwareToken = async (store: Store<SessionState, SessionActions>, mfaCode: string): Promise<void> => {
-    return new Promise<void>((resolve, reject) => {
-        console.log('SessionActions.verifyToken()');
+    return new Promise<void>(async (resolve, reject) => {
+        console.log('SessionActions.sendSoftwareToken()');
         if (!store.state.totpSession) {
             reject('Temporary credentials cannot be extracted, please try again.');
             return;
         }
         const { user, rememberDevice } = store.state.totpSession;
 
-        Auth.sendSoftwareToken(user, mfaCode, rememberDevice)
+        await Auth.sendSoftwareToken(user, mfaCode, rememberDevice)
             .then((mfaResult) => {
                 const state = {
                     session: mfaResult.session,

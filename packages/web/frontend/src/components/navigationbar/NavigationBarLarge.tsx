@@ -7,9 +7,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 import { Session } from '../../auth/Auth';
+import { SessionActions } from '../../state/SessionActions';
+import { SessionState } from '../../state/SessionStore';
 
-export const NavigationBarLarge = (props: { session?: Session; routeCompProps: RouteComponentProps }): JSX.Element => {
-    const { session } = props;
+export const NavigationBarLarge = (props: {
+    sessionStore: [SessionState, SessionActions];
+    routeCompProps: RouteComponentProps;
+}): JSX.Element => {
+    const [{ session }] = props.sessionStore;
     const { location } = props.routeCompProps;
     return (
         <Navbar
@@ -68,7 +73,7 @@ export const NavigationBarLarge = (props: { session?: Session; routeCompProps: R
 
 const UserAccountInfo = (session: Session): JSX.Element => {
     return (
-        <DropdownButton alignRight className="" id="dropdown-basic-button" title="André Markwalder">
+        <DropdownButton alignRight className="" id="dropdown-basic-button" title={session.userAttributes['name']}>
             <Container id="table-user">
                 <Row id="row-header" className="w-100 m-0 align-items-center">
                     <Col id="cell-brand" className="col-8 text-left">
