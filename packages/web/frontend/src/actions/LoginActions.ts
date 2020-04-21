@@ -1,6 +1,6 @@
 import { Store } from 'use-global-hook';
 import { State } from '../store';
-import * as Auth from '../auth/Auth';
+import * as Auth from '../auth';
 import { Actions } from '.';
 
 export type LoginActions = {

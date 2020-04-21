@@ -6,7 +6,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
-import { Session } from '../../auth/Auth';
+import { Session } from '../../auth';
 import { Actions } from '../../actions';
 import { State } from '../../store';
 

@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Nav, Navbar, Container, Row, Col } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
-import { Session } from '../../auth/Auth';
+import { Session } from '../../auth';
 import { State } from '../../store';
 import { Actions } from '../../actions';
 

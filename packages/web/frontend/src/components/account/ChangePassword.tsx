@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { State } from '../../store';
 import { Form, Button } from 'react-bootstrap';
-import { Actions } from '../../actions';
 import { RouteComponentProps } from 'react-router-dom';
+import { Actions } from '../../actions';
 
 export const ChangePassword = (props: { sessionStore: [State, Actions] } & RouteComponentProps): JSX.Element => {
     const [password, setPassword] = useState('');

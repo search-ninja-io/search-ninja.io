@@ -1,7 +1,7 @@
 import React from 'react';
 import useGlobalHook, { Store } from 'use-global-hook';
 import * as actions from '../actions';
-import { Session, getSession } from '../auth/Auth';
+import { Session, getSession } from '../auth';
 import { CognitoUser } from 'amazon-cognito-identity-js';
 
 export type State = {

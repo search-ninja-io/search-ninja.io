@@ -6,6 +6,7 @@ const cognitoUserPool = new CognitoUserPool({
     ClientId: config.Cognito.ClientId,
 });
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export interface Session {
     user: CognitoUser;
     cognitoSession: CognitoUserSession;

@@ -1,8 +1,8 @@
 import { Store } from 'use-global-hook';
 import { State } from '../store';
-import * as Auth from '../auth/Auth';
 import { Actions } from '.';
 import { logout } from './LogoutActions';
+import * as Auth from '../auth';
 
 export type ForgetPasswordActions = {
     forgotPasswordCodeRequest: (email: string) => Promise<void>;

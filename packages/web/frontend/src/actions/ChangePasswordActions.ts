@@ -1,8 +1,8 @@
 import { Store } from 'use-global-hook';
 import { State } from '../store';
-import * as Auth from '../auth/Auth';
 import { logout } from './LogoutActions';
 import { Actions } from '.';
+import Auth from '../auth';
 
 export type ChangePasswordActions = {
     changePassword: (password: string, newPassword: string) => Promise<boolean>;
