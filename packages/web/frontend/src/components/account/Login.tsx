@@ -107,6 +107,11 @@ export const Login = (props: LoginProps): JSX.Element => {
                 .catch((err) => actions.setError(err));
         };
 
+        const onClickCancel = (event: React.MouseEvent<HTMLButtonElement>): void => {
+            event.preventDefault();
+            actions.cancelMfa();
+        };
+
         return (
             <Styled>
                 <Container className="d-flex mt-5 justify-content-center">
@@ -140,9 +145,17 @@ export const Login = (props: LoginProps): JSX.Element => {
                                 />
                             </Form.Group>
 
-                            <Form.Group controlId="formLoginMfaSubmit">
-                                <Button variant="primary" type="submit">
+                            <Form.Group className="mt-4 d-flex justify-content-between" controlId="formLoginMfaSubmit">
+                                <Button className="col-4" variant="primary" type="submit">
                                     Submit
+                                </Button>
+                                <Button
+                                    className="col-4"
+                                    variant="secondary"
+                                    type="button"
+                                    onClick={(event: React.MouseEvent<HTMLButtonElement>): void => onClickCancel(event)}
+                                >
+                                    Cancel
                                 </Button>
                             </Form.Group>
                         </Form>

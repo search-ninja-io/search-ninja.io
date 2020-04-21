@@ -10,6 +10,7 @@ export type MfaActions = {
     associateSoftwareToken: () => Promise<string>;
     verifySoftwareToken: (verificationCode: string, deviceName: string) => Promise<void>;
     disableMfaDevice: () => Promise<void>;
+    cancelMfa: () => void;
 };
 
 export const sendSoftwareToken = async (store: Store<State, Actions>, mfaCode: string): Promise<void> => {
@@ -76,4 +77,13 @@ export const disableMfaDevice = async (store: Store<State, Actions>): Promise<vo
             .then(() => resolve())
             .catch((err) => reject(err));
     });
+};
+
+export const cancelMfa = (store: Store<State, Actions>): void => {
+    console.log('Actions.cancelMfa()');
+    const state = {
+        messages: undefined,
+        totpSession: undefined,
+    };
+    store.setState(state);
 };
