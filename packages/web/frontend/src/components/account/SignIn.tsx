@@ -3,33 +3,54 @@ import { StaticContext } from 'react-router';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Form, Button, Jumbotron, Container } from 'react-bootstrap';
 import styled from 'styled-components';
-import { useGlobalStore } from '../../store';
+import { useGlobalStore } from '../../state';
+
+import { SignInResponseType } from '../../actions';
 
 const Styled = styled.div``;
 
-type LoginProps = RouteComponentProps<
+type SignInProps = RouteComponentProps<
     {},
     StaticContext,
     { referrer: { pathname: string; search: string; hash: string } }
 >;
 
-export const Login = (props: LoginProps): JSX.Element => {
-    const [{ totpSession }, actions] = useGlobalStore();
+enum DisplayMode {
+    SignIn = 1,
+    Totp = 2,
+}
+
+export const SignIn = (props: SignInProps): JSX.Element => {
+    const [, actions] = useGlobalStore();
     const { referrer } = props.location.state || { referrer: { pathname: '/' } };
 
-    const LoginForm = (props: RouteComponentProps): JSX.Element => {
+    const [{ mode, user }, setDisplayMode] = useState<{
+        mode: DisplayMode;
+        user?: unknown;
+    }>({
+        mode: DisplayMode.SignIn,
+    });
+
+    const SignInForm = (): JSX.Element => {
         const [username, setUsername] = useState('');
         const [password, setPassword] = useState('');
         const [rememberDevice, setRememberDevice] = useState(false);
 
-        const onSubmitLogin = (event: React.FormEvent<HTMLFormElement>): void => {
+        const onSubmitSignIn = (event: React.FormEvent<HTMLFormElement>): void => {
             event.preventDefault();
             actions
-                .login(username, password, rememberDevice)
-                .then((totpRequired) => {
-                    if (!totpRequired) props.history.push(referrer);
+                .signIn(username, password, rememberDevice, referrer)
+                .then(({ response, user }) => {
+                    if (response === SignInResponseType.TOTP) {
+                        setDisplayMode({ mode: DisplayMode.Totp, user: user });
+                    }
                 })
                 .catch((err) => actions.setError(err));
+        };
+
+        const onClickFederatedSignIn = (type: string, event: React.MouseEvent<HTMLButtonElement>): void => {
+            event.preventDefault();
+            console.log('onClickFederatedSignIn', type);
         };
 
         return (
@@ -41,9 +62,9 @@ export const Login = (props: LoginProps): JSX.Element => {
                             width: '400px',
                         }}
                     >
-                        <h2>Login</h2>
-                        <Form className="mt-3" onSubmit={onSubmitLogin}>
-                            <Form.Group controlId="formLoginEmail">
+                        <h2>Sign In</h2>
+                        <Form className="mt-3" onSubmit={onSubmitSignIn}>
+                            <Form.Group controlId="formSignInEmail">
                                 <Form.Label>Email address</Form.Label>
                                 <Form.Control
                                     autoFocus
@@ -57,7 +78,7 @@ export const Login = (props: LoginProps): JSX.Element => {
                                 />
                             </Form.Group>
 
-                            <Form.Group controlId="formLoginPassword">
+                            <Form.Group controlId="formSignInPassword">
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control
                                     type="password"
@@ -80,14 +101,40 @@ export const Login = (props: LoginProps): JSX.Element => {
                                 />
                             </Form.Group>
 
-                            <Form.Group controlId="formLoginSubmit">
+                            <Form.Group controlId="formSignInSubmit">
                                 <Button variant="primary" type="submit">
                                     Submit
                                 </Button>
                             </Form.Group>
 
-                            <Form.Group controlId="formLoginForgotPassword">
+                            <Form.Group controlId="formSignInForgotPassword">
                                 <Link to="/forgotpassword">Forgot password?</Link>
+                            </Form.Group>
+
+                            <Form.Group
+                                className="mt-4 d-flex justify-content-between"
+                                controlId="formSignInTotpSubmit"
+                            >
+                                <Button
+                                    className="col-4"
+                                    variant="primary"
+                                    type="button"
+                                    onClick={(event: React.MouseEvent<HTMLButtonElement>): void =>
+                                        onClickFederatedSignIn('Google', event)
+                                    }
+                                >
+                                    Google
+                                </Button>
+                                <Button
+                                    className="col-4"
+                                    variant="primary"
+                                    type="button"
+                                    onClick={(event: React.MouseEvent<HTMLButtonElement>): void =>
+                                        onClickFederatedSignIn('Facebook', event)
+                                    }
+                                >
+                                    Facebook
+                                </Button>
                             </Form.Group>
                         </Form>
                     </Jumbotron>
@@ -96,20 +143,17 @@ export const Login = (props: LoginProps): JSX.Element => {
         );
     };
 
-    const MfaForm = (props: RouteComponentProps): JSX.Element => {
-        const [mfaCode, setMfaCode] = useState('');
+    const TotpForm = (): JSX.Element => {
+        const [verificationCode, setVerificationCode] = useState('');
 
-        const onSubmitMfa = (event: React.FormEvent<HTMLFormElement>): void => {
+        const onSubmitTotp = (event: React.FormEvent<HTMLFormElement>): void => {
             event.preventDefault();
-            actions
-                .sendSoftwareToken(mfaCode)
-                .then(() => props.history.push(referrer))
-                .catch((err) => actions.setError(err));
+            actions.confirmSignIn(user, verificationCode, referrer).catch((err) => actions.setError(err));
         };
 
         const onClickCancel = (event: React.MouseEvent<HTMLButtonElement>): void => {
             event.preventDefault();
-            actions.cancelMfa();
+            setDisplayMode({ mode: DisplayMode.SignIn });
         };
 
         return (
@@ -122,16 +166,8 @@ export const Login = (props: LoginProps): JSX.Element => {
                         }}
                     >
                         <h2>MFA</h2>
-                        <Form className="mt-3" onSubmit={onSubmitMfa}>
-                            <Form.Group controlId="formLoginMfaDevice">
-                                <Form.Label>
-                                    Device
-                                    <br />
-                                    {totpSession ? totpSession.device : 'n/a'}
-                                </Form.Label>
-                            </Form.Group>
-
-                            <Form.Group controlId="formLoginMfaCode">
+                        <Form className="mt-3" onSubmit={onSubmitTotp}>
+                            <Form.Group controlId="formSignInTotpCode">
                                 <Form.Label>Verification Token *</Form.Label>
                                 <Form.Control
                                     required
@@ -140,12 +176,15 @@ export const Login = (props: LoginProps): JSX.Element => {
                                     autoComplete="one-time-code"
                                     placeholder="Enter Verification Token"
                                     onChange={(event: React.FormEvent<HTMLInputElement>): void =>
-                                        setMfaCode(event.currentTarget.value)
+                                        setVerificationCode(event.currentTarget.value)
                                     }
                                 />
                             </Form.Group>
 
-                            <Form.Group className="mt-4 d-flex justify-content-between" controlId="formLoginMfaSubmit">
+                            <Form.Group
+                                className="mt-4 d-flex justify-content-between"
+                                controlId="formSignInTotpSubmit"
+                            >
                                 <Button className="col-4" variant="primary" type="submit">
                                     Submit
                                 </Button>
@@ -165,10 +204,10 @@ export const Login = (props: LoginProps): JSX.Element => {
         );
     };
 
-    if (totpSession) {
-        return <MfaForm {...props} />;
+    if (mode === DisplayMode.Totp) {
+        return <TotpForm />;
     }
-    return <LoginForm {...props} />;
+    return <SignInForm />;
 };
 
-export default Login;
+export default SignIn;

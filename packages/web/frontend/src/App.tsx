@@ -5,8 +5,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import { NavigationBar } from './components/navigationbar/NavigationBar';
-import { Login } from './components/account/Login';
-import { Logout } from './components/account/Logout';
+import { SignIn } from './components/account/SignIn';
+import { SignOut } from './components/account/SignOut';
 import { ForgotPassword } from './components/account/ForgotPassword';
 import { SignUp } from './components/account/SignUp';
 import { Settings } from './components/account/Settings';
@@ -15,15 +15,16 @@ import { Search } from './components/search/Search';
 import { MessageBanner } from './components/banner/MessageBanner';
 import { NotFound } from './components/NotFound';
 
-import { useGlobalStore } from './store';
+import { useGlobalStore } from './state';
 
 import { ProtectedRoute, ProtectedRouteProps } from './components/ProtectedRoute';
+import { GlobalHistory } from './history';
 
 const App: React.FC = () => {
-    const [{ initialized }, actions] = useGlobalStore();
+    const [{ initialized, isAuthenticated }] = useGlobalStore();
 
     const defaultProps: ProtectedRouteProps = {
-        isAuthenticated: actions.isUserLoggedIn,
+        isAuthenticated: isAuthenticated || false,
         authenticationPath: '/login',
     };
 
@@ -32,13 +33,14 @@ const App: React.FC = () => {
     } else {
         return (
             <Router>
+                <GlobalHistory />
                 <NavigationBar />
                 <MessageBanner />
                 <Switch>
                     <Route exact path="/" component={Home} />
                     <Route path="/signup" component={SignUp} />
-                    <Route path="/login" component={Login} />
-                    <Route path="/logout" component={Logout} />
+                    <Route path="/login" component={SignIn} />
+                    <Route path="/logout" component={SignOut} />
                     <Route path="/forgotpassword" component={ForgotPassword} />
                     <ProtectedRoute {...defaultProps} path={['/settings/:tab', '/settings']} component={Settings} />
                     <ProtectedRoute {...defaultProps} path="/search" component={Search} />

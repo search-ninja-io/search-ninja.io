@@ -2,12 +2,12 @@ import React from 'react';
 import { Redirect, Route, RouteProps, useLocation } from 'react-router';
 
 export interface ProtectedRouteProps extends RouteProps {
-    isAuthenticated: () => boolean;
+    isAuthenticated: boolean;
     authenticationPath: string;
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = (props: ProtectedRouteProps) => {
-    if (props.isAuthenticated()) {
+    if (props.isAuthenticated) {
         return <Route {...props} />;
     }
 

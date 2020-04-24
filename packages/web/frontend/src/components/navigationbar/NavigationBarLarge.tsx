@@ -6,15 +6,11 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
-import { Session } from '../../auth';
-import { Actions } from '../../actions';
-import { State } from '../../store';
-
 export const NavigationBarLarge = (props: {
-    store: [State, Actions];
+    currentUser: [boolean, { email: string; name: string; totpDevice: string } | undefined];
     routeCompProps: RouteComponentProps;
 }): JSX.Element => {
-    const [{ session }] = props.store;
+    const [isAuthenticated, currentUserDetails] = props.currentUser;
     const { location } = props.routeCompProps;
 
     return (
@@ -30,7 +26,7 @@ export const NavigationBarLarge = (props: {
             <Nav defaultActiveKey="/" activeKey={location.pathname}>
                 <Container className="col-8">
                     <Navbar.Brand href="/">Search Ninja</Navbar.Brand>
-                    {session ? (
+                    {isAuthenticated ? (
                         <>
                             <LinkContainer exact to="/">
                                 <Nav.Link>Home</Nav.Link>
@@ -48,14 +44,14 @@ export const NavigationBarLarge = (props: {
                     )}
                 </Container>
                 <Container className="col-4 justify-content-end">
-                    {session ? (
+                    {currentUserDetails ? (
                         <>
-                            <UserAccountInfo {...session} />
+                            <UserAccountInfo {...currentUserDetails} />
                         </>
                     ) : (
                         <>
                             <LinkContainer to="/login">
-                                <Nav.Link>Login</Nav.Link>
+                                <Nav.Link>Sign In</Nav.Link>
                             </LinkContainer>
                             <LinkContainer to="/signup">
                                 <Nav.Link>Sign Up</Nav.Link>
@@ -68,9 +64,9 @@ export const NavigationBarLarge = (props: {
     );
 };
 
-const UserAccountInfo = (session: Session): JSX.Element => {
+const UserAccountInfo = (currentUserDetails: { email: string; name: string; totpDevice: string }): JSX.Element => {
     return (
-        <DropdownButton alignRight className="" id="dropdown-basic-button" title={session.userAttributes['name']}>
+        <DropdownButton alignRight className="" id="dropdown-basic-button" title={currentUserDetails.name}>
             <Container id="table-user">
                 <Row id="row-header" className="w-100 m-0 align-items-center">
                     <Col id="cell-brand" className="col-8 text-left">
@@ -79,7 +75,7 @@ const UserAccountInfo = (session: Session): JSX.Element => {
                     <Col id="cell-logout" className="col-4 text-right">
                         <LinkContainer to="/logout">
                             <Dropdown.Item eventKey="/logout" className="setting-button">
-                                Logout
+                                Sign Out
                             </Dropdown.Item>
                         </LinkContainer>
                     </Col>
@@ -89,8 +85,8 @@ const UserAccountInfo = (session: Session): JSX.Element => {
                         <FontAwesomeIcon id="avatar" icon={faUserCircle} />
                     </Col>
                     <Col id="cell-info" className="col-8">
-                        <h4 className="">{session.userAttributes['name']}</h4>
-                        <p className="">{session.userAttributes['email']}</p>
+                        <h4 className="">{currentUserDetails.name}</h4>
+                        <p className="">{currentUserDetails.email}</p>
                         <p>
                             <LinkContainer to="/settings">
                                 <Dropdown.Item eventKey="/settings" className="setting-button">

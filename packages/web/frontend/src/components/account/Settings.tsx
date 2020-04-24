@@ -3,8 +3,8 @@ import { StaticContext } from 'react-router';
 import { Col, Container, Jumbotron, Nav, Row, Tab } from 'react-bootstrap';
 import styled from 'styled-components';
 import { ChangePassword } from './ChangePassword';
-import { Mfa } from './Mfa';
-import { useGlobalStore } from '../../store';
+import { Totp } from './Totp';
+import { useGlobalStore } from '../../state';
 import { RouteComponentProps } from 'react-router-dom';
 
 const Styled = styled.div``;
@@ -57,10 +57,10 @@ export const Settings = (props: SettingsProps): JSX.Element => {
                                 <Col sm={9}>
                                     <Tab.Content>
                                         <Tab.Pane mountOnEnter eventKey={SettingsTabs.ChangePassword}>
-                                            <ChangePassword {...props} sessionStore={[state, actions]} />
+                                            <ChangePassword {...props} store={[state, actions]} />
                                         </Tab.Pane>
                                         <Tab.Pane mountOnEnter eventKey={SettingsTabs.Mfa}>
-                                            <Mfa {...props} sessionStore={[state, actions]} />
+                                            <Totp {...props} store={[state, actions]} />
                                         </Tab.Pane>
                                     </Tab.Content>
                                 </Col>

@@ -3,10 +3,9 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { useGlobalStore } from '../../store';
-
 import { NavigationBarLarge } from './NavigationBarLarge';
 import { NavigationBarSmall } from './NavigationBarSmall';
+import { useGlobalStore } from '../../state';
 
 const Styled = styled.div`
     #table-user {
@@ -47,13 +46,21 @@ const Styled = styled.div`
     }
 `;
 
+// TODO: NavBar gets rendered three times. Why?
 export const NavigationBar = withRouter(
     (props: RouteComponentProps): JSX.Element => {
-        const [state, actions] = useGlobalStore();
+        const [{ isAuthenticated, currentUserDetails }] = useGlobalStore();
+
         return (
             <Styled>
-                <NavigationBarLarge store={[state, actions]} routeCompProps={props} />
-                <NavigationBarSmall store={[state, actions]} routeCompProps={props} />
+                <NavigationBarLarge
+                    currentUser={[isAuthenticated || false, currentUserDetails]}
+                    routeCompProps={props}
+                />
+                <NavigationBarSmall
+                    currentUser={[isAuthenticated || false, currentUserDetails]}
+                    routeCompProps={props}
+                />
             </Styled>
         );
     },

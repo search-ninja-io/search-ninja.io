@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import { State } from '../../store';
 import { Form, Button } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
 import { Actions } from '../../actions';
+import { State } from '../../state';
 
-export const ChangePassword = (props: { sessionStore: [State, Actions] } & RouteComponentProps): JSX.Element => {
+export const ChangePassword = (props: { store: [State, Actions] } & RouteComponentProps): JSX.Element => {
     const [password, setPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
-    const [{ session }, actions] = props.sessionStore;
+    const [{ currentUserDetails }, actions] = props.store;
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
 
         if (newPassword !== confirmNewPassword) {
-            actions.setError(new Error('New Password and Confirm Password are not the same.'));
+            actions.setError('New Password and Confirm Password are not the same.');
             return;
         }
 
@@ -26,7 +26,6 @@ export const ChangePassword = (props: { sessionStore: [State, Actions] } & Route
         actions
             .changePassword(password, newPassword)
             .then(() => actions.setSuccess('Successfully changed password. Please login again.'))
-            .then(() => props.history.push('/login'))
             .catch((err) => actions.setError(err));
     };
 
@@ -39,7 +38,7 @@ export const ChangePassword = (props: { sessionStore: [State, Actions] } & Route
                     type="text"
                     name="username"
                     autoComplete="username email"
-                    value={session ? session.userAttributes['email'] : ''}
+                    value={currentUserDetails ? currentUserDetails.email : ''}
                 />
 
                 <Form.Group controlId="formChangePasswordCurrentPassword">

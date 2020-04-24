@@ -51,7 +51,7 @@ module.exports = (env, argv) => {
         },
 
         resolve: {
-            extensions: ['.ts', '.tsx', '.js'],
+            extensions: ['.mjs', '.ts', '.tsx', '.js'],
             alias: { 'react-dom': '@hot-loader/react-dom' },
         },
 
@@ -68,7 +68,7 @@ module.exports = (env, argv) => {
         module: {
             rules: [
                 {
-                    test: /\/utils\/ConfigLoader.js$/,
+                    test: /\/config\/ConfigLoader.js$/,
                     use: [{ loader: 'val-loader' }],
                 },
                 {

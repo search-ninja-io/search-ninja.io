@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Container, Form, Jumbotron } from 'react-bootstrap';
-import { RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
-import { useGlobalStore } from '../../store';
+import { useGlobalStore } from '../../state';
 
 const Styled = styled.div``;
 
@@ -11,7 +10,7 @@ enum Stage {
     Code = 2,
 }
 
-export const ForgotPassword = (props: {} & RouteComponentProps): JSX.Element => {
+export const ForgotPassword = (): JSX.Element => {
     const [stage, setStage] = useState(Stage.Email);
     const [email, setEmail] = useState('');
 
@@ -21,8 +20,9 @@ export const ForgotPassword = (props: {} & RouteComponentProps): JSX.Element => 
         const sendCode = (event: React.FormEvent<HTMLFormElement>): void => {
             event.preventDefault();
             actions
-                .forgotPasswordCodeRequest(email)
+                .forgotPassword(email)
                 .then(() => setStage(Stage.Code))
+                .then(() => actions.setSuccess('Recovery Code has been sent to your email address.'))
                 .catch((err) => actions.setError(err));
         };
 
@@ -61,7 +61,7 @@ export const ForgotPassword = (props: {} & RouteComponentProps): JSX.Element => 
         );
     };
 
-    const ForgotPasswordCode = (props: {} & RouteComponentProps): JSX.Element => {
+    const ForgotPasswordCode = (): JSX.Element => {
         const [code, setCode] = useState('');
         const [newPassword, setNewPassword] = useState('');
         const [confirmPassword, setConfirmPassword] = useState('');
@@ -70,13 +70,13 @@ export const ForgotPassword = (props: {} & RouteComponentProps): JSX.Element => 
             event.preventDefault();
 
             if (newPassword !== confirmPassword) {
-                actions.setError(new Error('Passwords are not the same'));
+                actions.setError('Passwords are not the same');
                 return;
             }
 
             actions
-                .forgotPasswordConfirm(email, code, newPassword)
-                .then(() => props.history.push('/login'))
+                .forgotPasswordSubmit(email, code, newPassword)
+                .then(() => actions.setSuccess('Password successfully recovered. Plaes sign in with the new password.'))
                 .catch((err) => actions.setError(err));
         };
         return (
@@ -141,7 +141,7 @@ export const ForgotPassword = (props: {} & RouteComponentProps): JSX.Element => 
     if (stage === Stage.Email) {
         return <ForgotPasswordEmail />;
     } else {
-        return <ForgotPasswordCode {...props} />;
+        return <ForgotPasswordCode />;
     }
 };
 

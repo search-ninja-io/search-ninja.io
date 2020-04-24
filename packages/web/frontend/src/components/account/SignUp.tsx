@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Container, Jumbotron, Form, Button } from 'react-bootstrap';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { useGlobalStore } from '../../store';
+import { useGlobalStore } from '../../state';
 
 const Styled = styled.div``;
 
 // TODO: Implement own Registration Confirm page
 
-export const SignUp = (props: {} & RouteComponentProps): JSX.Element => {
+export const SignUp = (): JSX.Element => {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
@@ -17,10 +17,7 @@ export const SignUp = (props: {} & RouteComponentProps): JSX.Element => {
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
-        actions
-            .signup(email, name, password)
-            .then(() => props.history.push('/login'))
-            .catch((err) => actions.setError(err));
+        actions.signUp(email, name, password).catch((err) => actions.setError(err));
     };
 
     return (

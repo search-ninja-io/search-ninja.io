@@ -1,17 +1,17 @@
-import { ChangePasswordActions } from './ChangePasswordActions';
-import { ForgetPasswordActions } from './ForgetPasswordActions';
-import { LoginActions } from './LoginActions';
-import { LogoutActions } from './LogoutActions';
-import { MessageActions } from './MessageActions';
-import { MfaActions } from './MfaActions';
-import { SignupActions } from './SignupActions';
+import { ChangePasswordActions } from './ChangePassword';
+import { ForgetPasswordActions } from './ForgetPassword';
+import { SignInActions } from './SignIn';
+import { SignOutActions } from './SignOut';
+import { MessageActions } from './Message';
+import { TotpActions } from './Totp';
+import { SignUpActions } from './SignUp';
 
 export type Actions = ChangePasswordActions &
     ForgetPasswordActions &
-    LoginActions &
-    LogoutActions &
+    SignInActions &
+    SignOutActions &
     MessageActions &
-    MfaActions &
-    SignupActions;
+    TotpActions &
+    SignUpActions;
 
 export * from './Actions';
