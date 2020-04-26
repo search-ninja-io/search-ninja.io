@@ -10,6 +10,13 @@ const required = (val) => {
     }
 };
 
+const requiredArray = (val) => {
+    if (val === null) {
+        throw new Error('is a mandatory config value.');
+    }
+    return val.split(' ');
+};
+
 const config = convict({
     Cognito: {
         Region: {
@@ -36,6 +43,38 @@ const config = convict({
             default: null,
             env: 'COGNITO_CLIENT_ID',
         },
+        OAuth: {
+            Domain: {
+                doc: 'AWS Cognito OAuth Domain.',
+                format: required,
+                default: null,
+                env: 'COGNITO_OAUTH_DOMAIN',
+            },
+            Scope: {
+                doc: 'AWS Cognito OAuth Scope.',
+                format: requiredArray,
+                default: null,
+                env: 'COGNITO_OAUTH_SCOPE',
+            },
+            RedirectSignIn: {
+                doc: 'AWS Cognito OAuth Redirect Sign In.',
+                format: required,
+                default: null,
+                env: 'COGNITO_OAUTH_REDIRECT_SIGN_IN',
+            },
+            RedirectSignOut: {
+                doc: 'AWS Cognito OAuth Redirect Sign Out.',
+                format: required,
+                default: null,
+                env: 'COGNITO_OAUTH_REDIRECT_SIGN_OUT',
+            },
+            ResponseType: {
+                doc: 'AWS Cognito OAuth Respone Type.',
+                format: required,
+                default: null,
+                env: 'COGNITO_OAUTH_RESPONSE_TYPE',
+            },
+        }
     },
 });
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import useGlobalHook, { Store } from 'use-global-hook';
 import * as actions from '../actions';
-import { Auth } from 'aws-amplify';
+import { Hub } from 'aws-amplify';
 
 export type State = {
     initialized?: boolean;
@@ -19,7 +19,7 @@ export type State = {
 };
 
 const initialState: State = {
-    initialized: false,
+    initialized: true,
     isAuthenticated: false,
     currentUserDetails: undefined,
     message: {
@@ -29,30 +29,33 @@ const initialState: State = {
     },
 };
 
+const registerHub = (store: Store<State, actions.Actions>): void => {
+    Hub.listen('auth', (data) => {
+        switch (data.payload.event) {
+            case 'signIn':
+                console.log('Hub.listen(signIn)');
+                store.actions.updateUserSession();
+                break;
+
+            case 'signIn_failure':
+                console.log('Hub.listen(signIn_failure)');
+                store.actions.updateUserSession();
+                store.actions.setError(data.payload.data);
+                break;
+
+            default:
+                break;
+        }
+    });
+};
+
 export const useGlobalStore = useGlobalHook<State, actions.Actions>(
     React,
     initialState,
     actions,
     async (store: Store<State, actions.Actions>) => {
         console.log('SessionStore.Initializer');
-        let cognitoUser;
-        try {
-            cognitoUser = await Auth.currentAuthenticatedUser({ bypassCache: false });
-        } catch (err) {
-            console.log('SessionStore.recover() - No user authenticated');
-            store.setState({ initialized: true, isAuthenticated: false, currentUserDetails: undefined });
-            return;
-        }
-
-        console.log('SessionStore.recover() - User authenticated and session recovered');
-        const { attributes } = cognitoUser;
-        const email = attributes['email'];
-        const name = attributes['name'];
-        const totpEnabled = await store.actions.isTotpEnabled();
-        store.setState({
-            initialized: true,
-            isAuthenticated: true,
-            currentUserDetails: { email: email, name: name, isTotpEnabled: totpEnabled },
-        });
+        registerHub(store);
+        await store.actions.updateUserSession();
     },
 );

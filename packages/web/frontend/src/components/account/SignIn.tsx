@@ -6,6 +6,9 @@ import styled from 'styled-components';
 import { useGlobalStore } from '../../state';
 
 import { SignInResponseType } from '../../actions';
+import { Auth, Cache } from 'aws-amplify';
+
+import { withOAuth } from 'aws-amplify-react';
 
 const Styled = styled.div``;
 
@@ -20,7 +23,7 @@ enum DisplayMode {
     Totp = 2,
 }
 
-export const SignIn = (props: SignInProps): JSX.Element => {
+const SignInInternal = (props: SignInProps): JSX.Element => {
     const [, actions] = useGlobalStore();
     const { referrer } = props.location.state || { referrer: { pathname: '/' } };
 
@@ -34,12 +37,11 @@ export const SignIn = (props: SignInProps): JSX.Element => {
     const SignInForm = (): JSX.Element => {
         const [username, setUsername] = useState('');
         const [password, setPassword] = useState('');
-        const [rememberDevice, setRememberDevice] = useState(false);
 
         const onSubmitSignIn = (event: React.FormEvent<HTMLFormElement>): void => {
             event.preventDefault();
             actions
-                .signIn(username, password, rememberDevice, referrer)
+                .signIn(username, password, referrer)
                 .then(({ response, user }) => {
                     if (response === SignInResponseType.TOTP) {
                         setDisplayMode({ mode: DisplayMode.Totp, user: user });
@@ -48,9 +50,25 @@ export const SignIn = (props: SignInProps): JSX.Element => {
                 .catch((err) => actions.setError(err));
         };
 
-        const onClickFederatedSignIn = (type: string, event: React.MouseEvent<HTMLButtonElement>): void => {
+        const onClickFederatedGoogleSignIn = (event: React.MouseEvent<HTMLButtonElement>): void => {
             event.preventDefault();
-            console.log('onClickFederatedSignIn', type);
+            actions.federatedGoogleSignIn().catch((err) => actions.setError(err));
+        };
+
+        const checkUser = async (): Promise<void> => {
+            try {
+                const user = await Auth.currentAuthenticatedUser({ bypassCache: false });
+                console.log('checkUser:', user);
+
+                const federatedInfo = await Cache.getItem('federatedInfo');
+                console.log('federatedInfo:', federatedInfo);
+            } catch (error) {
+                console.log('checkUser:', error);
+            }
+        };
+
+        const signOut = async (): Promise<void> => {
+            await actions.signOut();
         };
 
         return (
@@ -91,16 +109,6 @@ export const SignIn = (props: SignInProps): JSX.Element => {
                                 />
                             </Form.Group>
 
-                            <Form.Group controlId="formRememberDevice">
-                                <Form.Check
-                                    type="switch"
-                                    checked={rememberDevice}
-                                    label="Remember Device"
-                                    placeholder="Remeber Device"
-                                    onChange={(): void => setRememberDevice(!rememberDevice)}
-                                />
-                            </Form.Group>
-
                             <Form.Group controlId="formSignInSubmit">
                                 <Button variant="primary" type="submit">
                                     Submit
@@ -116,24 +124,20 @@ export const SignIn = (props: SignInProps): JSX.Element => {
                                 controlId="formSignInTotpSubmit"
                             >
                                 <Button
-                                    className="col-4"
+                                    className="col-3"
                                     variant="primary"
                                     type="button"
                                     onClick={(event: React.MouseEvent<HTMLButtonElement>): void =>
-                                        onClickFederatedSignIn('Google', event)
+                                        onClickFederatedGoogleSignIn(event)
                                     }
                                 >
                                     Google
                                 </Button>
-                                <Button
-                                    className="col-4"
-                                    variant="primary"
-                                    type="button"
-                                    onClick={(event: React.MouseEvent<HTMLButtonElement>): void =>
-                                        onClickFederatedSignIn('Facebook', event)
-                                    }
-                                >
-                                    Facebook
+                                <Button className="col-3" variant="primary" type="button" onClick={checkUser}>
+                                    Check User
+                                </Button>
+                                <Button className="col-3" variant="primary" type="button" onClick={signOut}>
+                                    Sign Out
                                 </Button>
                             </Form.Group>
                         </Form>
@@ -209,5 +213,7 @@ export const SignIn = (props: SignInProps): JSX.Element => {
     }
     return <SignInForm />;
 };
+
+export const SignIn = withOAuth(SignInInternal);
 
 export default SignIn;

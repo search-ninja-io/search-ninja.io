@@ -11,6 +11,13 @@ Amplify.configure({
         region: config.Cognito.Region,
         userPoolId: config.Cognito.UserPoolId,
         userPoolWebClientId: config.Cognito.ClientId,
+        oauth: {
+            domain: config.Cognito.OAuth.Domain,
+            scope: config.Cognito.OAuth.Scope,
+            redirectSignIn: config.Cognito.OAuth.RedirectSignIn,
+            redirectSignOut: config.Cognito.OAuth.RedirectSignOut,
+            responseType: config.Cognito.OAuth.ResponseType,
+        },
 
         /* 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not

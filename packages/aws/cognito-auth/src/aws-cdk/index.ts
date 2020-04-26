@@ -39,11 +39,12 @@ export class SearchNinjaAuth {
 
         const userPoolAllowedAuthScopes = config.COGNITO_AUTH_USER_POOL_ALLOWED_AUTH_SCOPES.split(' ');
 
+        const callbackUrls = config.COGNITO_AUTH_CALLBACK_URLS.split(' ');
+        const logoutUrls = config.COGNITO_AUTH_LOGOUT_URLS.split(' ');
+
         const googleClientId = config.COGNITO_AUTH_GOOGLE_CLIENT_ID;
         const googleClientSecret = config.COGNITO_AUTH_GOOGLE_CLIENT_SECRET;
         const googleClientAuthorizeScopes = config.COGNITO_AUTH_GOOGLE_CLIENT_AUTHORIZE_SCOPES;
-        const googleCallbackUrls = config.COGNITO_AUTH_GOOGLE_CALLBACK_URLS.split(' ');
-        const googleLogoutUrls = config.COGNITO_AUTH_GOOGLE_LOGOUT_URLS.split(' ');
 
         const lambdaPath = path.resolve(__dirname, '../lambda');
 
@@ -102,6 +103,16 @@ export class SearchNinjaAuth {
         });
 
         const cfnUserPool = userPool.node.defaultChild as CfnUserPool;
+        if (cfnUserPool.schema) {
+            const schema = cfnUserPool.schema as CfnUserPool.SchemaAttributeProperty[];
+            cfnUserPool.schema = schema.map<CfnUserPool.SchemaAttributeProperty>((entry) => {
+                if (entry.name === 'name' || entry.name === 'email') {
+                    return { mutable: true, ...entry };
+                }
+                return entry;
+            });
+        }
+
         cfnUserPool.emailConfiguration = {
             emailSendingAccount: 'DEVELOPER',
             from: emailFrom,
@@ -119,13 +130,6 @@ export class SearchNinjaAuth {
         cfnUserPool.userPoolAddOns = {
             advancedSecurityMode: 'ENFORCED',
         };
-        if (cfnUserPool.schema) {
-            (cfnUserPool.schema as CfnUserPool.SchemaAttributeProperty[]).push({
-                name: 'mfa',
-                attributeDataType: 'String',
-                mutable: true,
-            });
-        }
 
         const cfnUserPoolRiskConfigAtt = new CfnUserPoolRiskConfigurationAttachment(
             stack,
@@ -210,8 +214,8 @@ export class SearchNinjaAuth {
             preventUserExistenceErrors: 'ENABLED',
             generateSecret: false,
             refreshTokenValidity: 1,
-            callbackUrLs: googleCallbackUrls,
-            logoutUrLs: googleLogoutUrls,
+            callbackUrLs: callbackUrls,
+            logoutUrLs: logoutUrls,
             userPoolId: userPool.userPoolId,
         });
         cfnUserPoolClient.addDependsOn(userPoolIdentityProviderGoogleIdp);

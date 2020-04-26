@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { useGlobalStore } from '../../state';
 
 export const SignOut = (): JSX.Element => {
-    const [{ isAuthenticated }, actions] = useGlobalStore();
+    const [{ isAuthenticated, currentUserDetails }, actions] = useGlobalStore();
 
     useEffect(() => {
-        if (isAuthenticated) {
+        if (isAuthenticated || currentUserDetails) {
             actions.signOut().catch((err) => actions.setError(err));
         }
     }, [isAuthenticated]);

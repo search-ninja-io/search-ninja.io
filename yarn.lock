@@ -4442,6 +4442,14 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
+aws-amplify-react@^4.1.8:
+  version "4.1.8"
+  resolved "https://registry.yarnpkg.com/aws-amplify-react/-/aws-amplify-react-4.1.8.tgz#0cd10fc661ef6013ff63769484a82113454b3cb2"
+  integrity sha512-U5LW18sONOw/+5AoBvug0eV/Wdg9KtD/9aSZDiC+l32AJnC4rdvtmnPIUWgbBhTXNvO0xDEfrn1OuFPsaBaBdg==
+  dependencies:
+    qrcode.react "^0.8.0"
+    regenerator-runtime "^0.11.1"
+
 aws-amplify@^3.0.8:
   version "3.0.8"
   resolved "https://registry.yarnpkg.com/aws-amplify/-/aws-amplify-3.0.8.tgz#0e85f84e6a84d22b271fd476d855dcbc5530b344"
@@ -10476,6 +10484,14 @@ qr.js@0.0.0:
   resolved "https://registry.yarnpkg.com/qr.js/-/qr.js-0.0.0.tgz#cace86386f59a0db8050fa90d9b6b0e88a1e364f"
   integrity sha1-ys6GOG9ZoNuAUPqQ2baw6IoeNk8=
 
+qrcode.react@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/qrcode.react/-/qrcode.react-0.8.0.tgz#413b31cc3b62910e39513f7bead945e01c4c34fb"
+  integrity sha512-16wKpuFvLwciIq2YAsfmPUCnSR8GrYPsXRK5KVdcIuX0+W/MKZbBkFhl44ttRx4TWZHqRjfztoWOxdPF0Hb9JA==
+  dependencies:
+    prop-types "^15.6.0"
+    qr.js "0.0.0"
+
 qrcode.react@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/qrcode.react/-/qrcode.react-1.0.0.tgz#7e8889db3b769e555e8eb463d4c6de221c36d5de"
@@ -10846,6 +10862,11 @@ regenerate@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.0.tgz#4a856ec4b56e4077c557589cae85e7a4c8869a11"
   integrity sha512-1G6jJVDWrt0rK99kBjvEtziZNCICAuvIPkSiUFIQxVP06RCVpq3dmDo2oi6ABpYaDYaTRr67BEhL8r1wgEZZKg==
+
+regenerator-runtime@^0.11.1:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz#be05ad7f9bf7d22e056f9726cee5017fbf19e2e9"
+  integrity sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg==
 
 regenerator-runtime@^0.13.4:
   version "0.13.5"

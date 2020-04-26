@@ -9,7 +9,7 @@ const Styled = styled.div``;
 // TODO: Implement own Registration Confirm page
 
 export const SignUp = (): JSX.Element => {
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
 
@@ -17,7 +17,7 @@ export const SignUp = (): JSX.Element => {
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
-        actions.signUp(email, name, password).catch((err) => actions.setError(err));
+        actions.signUp(username, name, password).catch((err) => actions.setError(err));
     };
 
     return (
@@ -39,7 +39,7 @@ export const SignUp = (): JSX.Element => {
                                 autoComplete="username"
                                 placeholder="Enter email"
                                 onChange={(event: React.FormEvent<HTMLInputElement>): void =>
-                                    setEmail(event.currentTarget.value)
+                                    setUsername(event.currentTarget.value)
                                 }
                             />
                         </Form.Group>
