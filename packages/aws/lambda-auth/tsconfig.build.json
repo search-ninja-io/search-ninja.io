@@ -1,0 +1,12 @@
+{
+    "extends": "../../../tsconfig.json",
+
+    "compilerOptions": {
+        "outDir": "dist",
+        "baseUrl": "src",
+        "skipLibCheck": true
+    },
+
+    "include": ["src/aws-cdk/**/*"],
+    "exclude": ["node_modules", "**/*.spec.ts", "dist/**/*"]
+}

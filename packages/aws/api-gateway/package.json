@@ -7,7 +7,6 @@
     "scripts": {
         "clean": "rimraf dist",
         "build": "tsc -b tsconfig.build.json",
-        "lint": "eslint . --ext .ts,.tsx",
         "watch": "tsc -w -p tsconfig.build.json"
     },
     "dependencies": {}

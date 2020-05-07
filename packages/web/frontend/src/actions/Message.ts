@@ -1,5 +1,5 @@
 import { Store } from 'use-global-hook';
-import { State } from '../state';
+import { State } from '../utils/store';
 import { Actions } from '.';
 
 export type MessageActions = {

@@ -6,8 +6,9 @@
     "license": "MIT",
     "scripts": {
         "clean": "rimraf dist",
+        "lint": "eslint . --ignore-path ../../../.eslintignore --ext .ts,.tsx,.js,.jsx",
+        "prettier": "prettier . --ignore-path ../../../.prettierignore --write",
         "build": "tsc -b tsconfig.build.json",
-        "lint": "eslint . --ext .ts,.tsx",
         "watch": "tsc -w -p tsconfig.build.json"
     },
     "dependencies": {}

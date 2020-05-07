@@ -1,15 +1,10 @@
 export interface Config {
     Cognito: {
         Region: string;
-        UserPoolId: string;
         IdentityPoolId: string;
+    };
+    Auth0: {
+        Domain: string;
         ClientId: string;
-        OAuth: {
-            Domain: string;
-            Scope: string[];
-            RedirectSignIn: string;
-            RedirectSignOut: string;
-            ResponseType: string;
-        };
     };
 }

@@ -2,49 +2,8 @@
     "extends": "../../../tsconfig.json",
     "compilerOptions": {
         "outDir": "dist",
-
-        "target": "es2018",
-        "module": "commonjs",
-        "lib": ["es2018"],
-
+        "baseUrl": "src",
         "skipLibCheck": true
-
-        // DIFFERENT - USE DEFUALT: "strictPropertyInitialization": false,
-        // DIFFERENT - USE DEFUALT: "noUnusedLocals": false,
-        // DIFFERENT - USE DEFUALT: "noUnusedParameters": false,
-        // DIFFERENT - USE DEFUALT: "noFallthroughCasesInSwitch": false,
     },
     "exclude": ["cdk.out", "dist", "node_modules"]
 }
-
-/** Original tsconf.json 
-{
-    "compilerOptions": {
-        "target": "ES2018",
-        "module": "commonjs",
-        "lib": [
-            "es2018"
-        ],
-        "declaration": true,
-        "strict": true,
-        "noImplicitAny": true,
-        "strictNullChecks": true,
-        "noImplicitThis": true,
-        "alwaysStrict": true,
-        "noUnusedLocals": false,
-        "noUnusedParameters": false,
-        "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": false,
-        "inlineSourceMap": true,
-        "inlineSources": true,
-        "experimentalDecorators": true,
-        "strictPropertyInitialization": false,
-        "outDir": "./dist"
-    },
-    "exclude": [
-        "cdk.out",
-        "dist",
-        "node_modules"
-    ]
-}
-*/

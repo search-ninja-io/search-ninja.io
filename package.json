@@ -3,21 +3,14 @@
     "private": true,
     "scripts": {
         "clean": "lerna run clean",
+        "format": "prettier --write .",
+        "lint": "eslint --ext .ts,.tsx,.js,.jsx .",
+        "lint:fix": "eslint --ext .ts,.tsx,.js,.jsx --fix .",
         "build": "lerna run build",
-        "lint": "lerna run lint",
         "watch": "lerna run --parallel watch",
         "start": "lerna run start --stream --no-prefix --scope @search-ninja-web/frontend",
         "deploy": "lerna run deploy --scope @search-ninja-aws/cdk-stack",
         "destroy": "lerna run destroy --scope @search-ninja-aws/cdk-stack"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
-    },
-    "lint-staged": {
-        "*.{js,jsx}": "eslint",
-        "*.{ts,tsx}": "eslint"
     },
     "devDependencies": {
         "@aws-cdk/assets": "^1.32.0",
@@ -57,15 +50,18 @@
         "@aws-cdk/aws-ssm": "^1.32.0",
         "@aws-cdk/aws-stepfunctions": "^1.32.0",
         "@aws-cdk/aws-stepfunctions-tasks": "^1.32.0",
+        "@aws-cdk/cloud-assembly-schema": "^1.36.1",
         "@aws-cdk/core": "^1.32.0",
         "@aws-cdk/custom-resources": "^1.32.0",
         "@aws-cdk/cx-api": "^1.32.0",
         "@aws-cdk/region-info": "^1.32.0",
-        "@babel/core": "^7.9.0",
+        "@babel/cli": "^7.8.4",
+        "@babel/core": "^7.9.6",
         "@babel/plugin-proposal-class-properties": "^7.8.3",
         "@babel/plugin-proposal-object-rest-spread": "^7.9.5",
         "@babel/plugin-transform-runtime": "^7.9.0",
-        "@babel/preset-env": "^7.9.5",
+        "@babel/polyfill": "^7.8.7",
+        "@babel/preset-env": "^7.9.6",
         "@babel/preset-react": "^7.9.4",
         "@babel/preset-typescript": "^7.9.0",
         "@types/node": "^13.0.0",
@@ -78,10 +74,11 @@
         "@typescript-eslint/parser": "^2.27.0",
         "assets-webpack-plugin": "^3.9.12",
         "aws-cdk": "^1.32.0",
+        "babel-eslint": "^10.1.0",
         "babel-loader": "^8.1.0",
         "brotli-webpack-plugin": "^1.1.0",
         "clean-webpack-plugin": "^3.0.0",
-        "constructs": "^2.0.0",
+        "constructs": "^3.0.0",
         "convict": "^5.2.0",
         "copy-webpack-plugin": "^5.1.1",
         "css-loader": "^3.5.2",
@@ -107,6 +104,7 @@
     },
     "workspaces": [
         "packages/web/**",
-        "packages/aws/**"
+        "packages/aws/**",
+        "packages/auth0/**"
     ]
 }

@@ -1,6 +1,6 @@
 {
-  "packages": ["packages/aws/**", "packages/web/**", "packages/tools/**"],
-  "version": "independent",
-  "npmClient": "yarn",
-  "useWorkspaces": true
+    "packages": ["packages/aws/**", "packages/web/**", "packages/auth0/**"],
+    "version": "independent",
+    "npmClient": "yarn",
+    "useWorkspaces": true
 }

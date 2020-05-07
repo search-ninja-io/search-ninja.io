@@ -1,6 +1,6 @@
 {
-  "name": "@search-ninja-aws/lambda-ms-onenote-reader",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT"
+    "name": "@search-ninja-aws/lambda-ms-onenote-reader",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT"
 }

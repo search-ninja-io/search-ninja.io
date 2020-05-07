@@ -1,13 +1,15 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "es2020",
         "module": "commonjs",
+        "experimentalDecorators": true,
         "declaration": true,
         "strict": true,
         "sourceMap": true,
         "jsx": "react",
         "esModuleInterop": true,
-
-        "skipLibCheck": true
+        "incremental": true,
+        "removeComments": true,
+        "emitDecoratorMetadata": true
     }
 }
