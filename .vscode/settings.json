@@ -1,33 +1,17 @@
 {
+    "workbench.iconTheme": "eq-material-theme-icons-palenight",
+    "workbench.colorTheme": "Community Material Theme Palenight High Contrast",
+    "workbench.tree.indent": 20,
     "window.zoomLevel": 1,
     "terminal.integrated.shell.osx": "/bin/zsh",
     "terminal.integrated.rendererType": "dom",
     "terminal.integrated.fontFamily": "MesloLGS NF",
-    "editor.detectIndentation": false,
-    "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
     "files.exclude": {
         "**/node_modules": true
     },
-    "workbench.tree.indent": 20,
-    "eslint.packageManager": "yarn",
-    "tslint.packageManager": "yarn",
-    "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
-    },
-    "[javascript]": {
-        "editor.formatOnSave": true
-    },
-    "[javascriptreact]": {
-        "editor.formatOnSave": true
-    },
-    "[typescript]": {
-        "editor.formatOnSave": true
-    },
-    "[typescriptreact]": {
-        "editor.formatOnSave": true
-    },
+    "todo-tree.tree.showScanModeButton": false,
+    "todo-tree.highlights.enabled": false,
+    "todo-tree.filtering.useBuiltInExcludes": "file excludes",
     "browser-preview.chromeExecutable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
     "browser-preview.startUrl": "http://localhost:3000",
     "liveSassCompile.settings.formats": [
@@ -39,7 +23,6 @@
     ],
     "liveSassCompile.settings.generateMap": false,
     "color-highlight.markerType": "dot-before",
-    "todo-tree.highlights.enabled": false,
     "better-comments.tags": [
         {
             "tag": "!",
@@ -78,9 +61,22 @@
             "backgroundColor": "transparent"
         }
     ],
+    "gitlens.defaultDateFormat": "",
+    "gitlens.defaultDateShortFormat": "",
+    "gitlens.blame.dateFormat": "",
+    "gitlens.currentLine.dateFormat": "",
+    "editor.minimap.enabled": false,
     "editor.fontFamily": "Fira Code",
     "editor.fontLigatures": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.detectIndentation": false,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
     "eslint.alwaysShowStatus": true,
-    "eslint.workingDirectories": ["./packages/*/"],
-    "todo-tree.filtering.useBuiltInExcludes": "file excludes"
+    "eslint.format.enable": true,
+    "eslint.packageManager": "yarn",
+    "prettier.packageManager": "yarn"
 }

@@ -12,7 +12,7 @@ export class SearchNinjaAuth {
 
         const authHandler = new Function(stack, 'AuthHandler' + nameSuffix, {
             runtime: Runtime.NODEJS_12_X,
-            handler: 'main.handler',
+            handler: 'server.handler',
             code: Code.fromAsset(lambdaPath),
             environment: {
                 RUNTIME_LAMBDA: 'true',

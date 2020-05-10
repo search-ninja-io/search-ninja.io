@@ -34,19 +34,21 @@ export class SearchIndexServiceApi {
         const domainName = config.API_GATEWAY_DOMAIN_NAME;
         const stageName = config.STAGE_NAME;
 
-        const certificate = Certificate.fromCertificateArn(stack, 'SearchIndexServiceAPICertificate', certificateArn);
+        //const certificate = Certificate.fromCertificateArn(stack, 'SearchIndexServiceAPICertificate', certificateArn);
 
         this.apiGateway = new RestApi(stack, 'SearchIndexServiceAPI' + nameSuffix, {
             deployOptions: {
                 stageName: stageName,
             },
+            /*
             domainName: {
                 domainName: domainName,
                 certificate: certificate,
                 endpointType: EndpointType.EDGE,
             },
+            */
         });
-
+        /*
         new route53.ARecord(stack, 'SearchIndexServiceAPICustomDomainAliasRecord' + nameSuffix, {
             zone: route53.HostedZone.fromHostedZoneAttributes(stack, 'SearchIndexServiceHostedZone' + nameSuffix, {
                 hostedZoneId: hostedZoneId,
@@ -55,6 +57,7 @@ export class SearchIndexServiceApi {
             recordName: domainName,
             target: route53.RecordTarget.fromAlias(new targets.ApiGateway(this.apiGateway)),
         });
+        */
 
         // TODO: Authorizer
 
