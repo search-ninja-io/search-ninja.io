@@ -102,6 +102,7 @@
     },
     "workspaces": [
         "packages/web/**",
+        "packages/backend/**",
         "packages/aws/**",
         "packages/auth0/**"
     ]

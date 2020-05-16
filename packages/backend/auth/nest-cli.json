@@ -1,8 +1,8 @@
 {
+    "language": "ts",
     "collection": "@nestjs/schematics",
-    "sourceRoot": "src/lambda",
+    "sourceRoot": "src",
     "compilerOptions": {
-        "webpack": true,
         "plugins": ["@nestjs/swagger/plugin"]
     }
 }

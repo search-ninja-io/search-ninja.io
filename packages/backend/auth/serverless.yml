@@ -1,0 +1,55 @@
+service:
+    name: search-ninja-backend-auth
+
+plugins:
+    - serverless-plugin-typescript
+    - serverless-plugin-optimize
+    - serverless-dotenv-plugin
+    - serverless-offline
+
+#    - serverless-cloudformation-sub-variables
+
+# - serverless-plugin-warmup
+
+# custom:
+#   # Enable warmup on all functions (only for production and staging)
+#   warmup:
+#       - production
+#       - staging
+
+provider:
+    name: aws
+    runtime: nodejs12.x
+    profile: ${env:AWS_PROFILE}
+    stage: ${env:STAGE}
+    apiGateway:
+        restApiId: ${cf:search-ninja-api-gateway-${env:STAGE}.ApiGatewayRestApiId}
+        restApiRootResourceId: ${cf:search-ninja-api-gateway-${env:STAGE}.ApiGatewayRestApiRootResourceId}
+
+package:
+    individually: true
+
+custom:
+    optimize:
+        externalPaths:
+            swagger-ui-dist: '../../../../node_modules/swagger-ui-dist/'
+        external: ['swagger-ui-dist']
+
+functions:
+    main:
+        handler: src/main.handler
+        events:
+            - http: ANY /${env:BASE_PATH}
+            - http: ANY /${env:BASE_PATH}/{proxy+}
+            - http:
+                  method: ANY
+                  path: /${env:BASE_PATH}/user
+                  authorizer:
+                      type: CUSTOM
+                      authorizerId: ${cf:search-ninja-api-gateway-${env:STAGE}.ApiGatewayAuthorizerId}
+            - http:
+                  method: ANY
+                  path: /${env:BASE_PATH}/user/{proxy+}
+                  authorizer:
+                      type: CUSTOM
+                      authorizerId: ${cf:search-ninja-api-gateway-${env:STAGE}.ApiGatewayAuthorizerId}
