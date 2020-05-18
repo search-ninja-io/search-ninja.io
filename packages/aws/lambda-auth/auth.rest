@@ -1,9 +1,0 @@
-
-
-POST http://localhost:4000/auth/change-password
-Content-Type: application/json
-
-{
-    "email":"ERRO"
-}
-

@@ -1,10 +1,9 @@
 import { Controller, HttpStatus, Logger, Get } from '@nestjs/common';
 import { PingResponse } from './health.dto';
-import { ApiBearerAuth, ApiTags, ApiInternalServerErrorResponse } from '@nestjs/swagger';
+import { ApiTags, ApiInternalServerErrorResponse } from '@nestjs/swagger';
 import { InternalServerErrorResponse } from '../common/common.dto';
 
 @Controller('health')
-@ApiBearerAuth()
 @ApiTags('Health')
 @ApiInternalServerErrorResponse({ type: InternalServerErrorResponse })
 export class HealthController {

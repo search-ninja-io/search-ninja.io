@@ -24,18 +24,12 @@ process.on('uncaughtException', (reason) => {
 
 const configGlobalPrefix = (): string => process.env.BASE_PATH || '<env-var-not-set>';
 const configSwaggerPath = (): string => process.env.SWAGGER_PATH || '<env-var-not-set>';
-const configStage = (): string => process.env.STAGE || '<env-var-not-set>';
 
-const setupSwagger = (nestApp: INestApplication, event: APIGatewayEvent): INestApplication => {
-    const host = event.headers.Host;
-    const protocol = host.startsWith('localhost') ? 'http://' : 'https://';
-    const urlSuffix = host.startsWith('localhost') ? '/' + configStage() + '/' : '/';
-
+const setupSwagger = (nestApp: INestApplication): INestApplication => {
     const options = new DocumentBuilder()
         .setTitle('Search Ninja - Authentication API')
         .setDescription('The Search Ninja Authentication API')
         .setVersion('1.0')
-        .addServer(protocol + host + urlSuffix)
         .addBearerAuth()
         .build();
     const document = SwaggerModule.createDocument(nestApp, options);
@@ -43,7 +37,7 @@ const setupSwagger = (nestApp: INestApplication, event: APIGatewayEvent): INestA
     return nestApp;
 };
 
-const bootstrapServer = async (event: APIGatewayEvent): Promise<Server> => {
+const bootstrapServer = async (): Promise<Server> => {
     return new Promise<Server>((resolve, reject) => {
         if (cachedServer) {
             resolve(cachedServer);
@@ -59,7 +53,7 @@ const bootstrapServer = async (event: APIGatewayEvent): Promise<Server> => {
                 nestApp.setGlobalPrefix(configGlobalPrefix());
                 nestApp.use(eventContext());
                 nestApp.useGlobalPipes(new ValidationPipe());
-                setupSwagger(nestApp, event);
+                setupSwagger(nestApp);
                 nestApp.init();
             })
             .then(() => {
@@ -70,7 +64,7 @@ const bootstrapServer = async (event: APIGatewayEvent): Promise<Server> => {
     });
 };
 
-const correctSwaggerUrl = (event: APIGatewayEvent): APIGatewayEvent => {
+const rewriteSwaggerUrls = (event: APIGatewayEvent): APIGatewayEvent => {
     const globalPrefix = configGlobalPrefix();
     const swaggerPath = configSwaggerPath();
 
@@ -86,7 +80,7 @@ const correctSwaggerUrl = (event: APIGatewayEvent): APIGatewayEvent => {
 };
 
 export const handler: Handler = async (event: APIGatewayEvent, context: Context) => {
-    event = correctSwaggerUrl(event);
-    cachedServer = await bootstrapServer(event);
+    event = rewriteSwaggerUrls(event);
+    cachedServer = await bootstrapServer();
     return proxy(cachedServer, event, context, 'PROMISE').promise;
 };

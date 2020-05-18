@@ -1,55 +1,69 @@
-service:
-    name: search-ninja-backend-auth
+org: searchninja
+app: search-ninja-io
+service: search-ninja-backend-auth
 
 plugins:
     - serverless-plugin-typescript
-    - serverless-plugin-optimize
     - serverless-dotenv-plugin
+    - serverless-deployment-bucket
+    - serverless-s3-remover
+    - serverless-domain-manager
     - serverless-offline
-
-#    - serverless-cloudformation-sub-variables
-
-# - serverless-plugin-warmup
-
-# custom:
-#   # Enable warmup on all functions (only for production and staging)
-#   warmup:
-#       - production
-#       - staging
+    - serverless-plugin-monorepo
 
 provider:
     name: aws
+    stage: ${env:STAGE}
+    cfnRole: ${env:CFN_ROLE}
     runtime: nodejs12.x
     profile: ${env:AWS_PROFILE}
-    stage: ${env:STAGE}
-    apiGateway:
-        restApiId: ${cf:search-ninja-api-gateway-${env:STAGE}.ApiGatewayRestApiId}
-        restApiRootResourceId: ${cf:search-ninja-api-gateway-${env:STAGE}.ApiGatewayRestApiRootResourceId}
-
-package:
-    individually: true
+    stackName: search-ninja-backend-auth-${env:STAGE}
+    deploymentBucket:
+        name: search-ninja-backend-auth-deployment-bucket-${env:STAGE}
+    httpApi:
+        name: search-ninja-backend-auth-${env:STAGE}
+        authorizers:
+            search-ninja-authorizer:
+                identitySource: $request.header.Authorization
+                issuerUrl: ${env:AUTH0_ISSUER_URL}
+                audience: ${env:AUTH0_AUDIENCE}
 
 custom:
-    optimize:
-        externalPaths:
-            swagger-ui-dist: '../../../../node_modules/swagger-ui-dist/'
-        external: ['swagger-ui-dist']
+    dotenv:
+        basePath: ../config/
+    serverless-offline:
+        noAuth: true
+        noPrependStageInUrl: true
+    remover:
+        buckets:
+            - ${self:provider.deploymentBucket.name}
+    customDomain:
+        apiType: http
+        endpointType: regional
+        domainName: ${env:DOMAIN_NAME}
+        certificateName: ${env:CERTIFICATE_NAME}
+        basePath: ''
+        createRoute53Record: true
 
 functions:
     main:
         handler: src/main.handler
+        layers:
+            - ${cf:search-ninja-backend-nestjs-layer-${env:STAGE}.SearchNinjaBackendNestJSLayer}
         events:
-            - http: ANY /${env:BASE_PATH}
-            - http: ANY /${env:BASE_PATH}/{proxy+}
-            - http:
-                  method: ANY
-                  path: /${env:BASE_PATH}/user
+            - httpApi: 'GET /${env:BASE_PATH}/docs'
+            - httpApi: 'GET /${env:BASE_PATH}/docs/{proxy+}'
+            - httpApi: 'GET /${env:BASE_PATH}/swagger-ui.css'
+            - httpApi: 'GET /${env:BASE_PATH}/swagger-ui-bundle.js'
+            - httpApi: 'GET /${env:BASE_PATH}/swagger-ui-standalone-preset.js'
+            - httpApi: 'GET /${env:BASE_PATH}/swagger-ui-init.js'
+
+            - httpApi:
+                  method: '*'
+                  path: '/${env:BASE_PATH}/health/{proxy+}'
+
+            - httpApi:
+                  method: '*'
+                  path: '/${env:BASE_PATH}/{proxy+}'
                   authorizer:
-                      type: CUSTOM
-                      authorizerId: ${cf:search-ninja-api-gateway-${env:STAGE}.ApiGatewayAuthorizerId}
-            - http:
-                  method: ANY
-                  path: /${env:BASE_PATH}/user/{proxy+}
-                  authorizer:
-                      type: CUSTOM
-                      authorizerId: ${cf:search-ninja-api-gateway-${env:STAGE}.ApiGatewayAuthorizerId}
+                      name: search-ninja-authorizer
