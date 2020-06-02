@@ -1,14 +1,14 @@
-import { Handler, Context, APIGatewayEvent } from 'aws-lambda';
+import { Handler, Context, APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { Server } from 'http';
 import express from 'express';
 import { createServer, proxy } from 'aws-serverless-express';
 import { eventContext } from 'aws-serverless-express/middleware';
 
 import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ValidationPipe, INestApplication, LogLevel } from '@nestjs/common';
+import { ValidationPipe, LogLevel } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { ExpressAdapter } from '@nestjs/platform-express';
+import { generateOpenAPIDocument } from './api/api.definition';
 
 const binaryMimeTypes: string[] = [];
 
@@ -22,20 +22,15 @@ process.on('uncaughtException', (reason) => {
     console.error(reason);
 });
 
-const configGlobalPrefix = (): string => process.env.BASE_PATH || '<env-var-not-set>';
-const configSwaggerPath = (): string => process.env.SWAGGER_PATH || '<env-var-not-set>';
+const isAPIGateway = (event: APIGatewayEvent) => event.headers.Host.includes('.execute-api.');
 
-const setupSwagger = (nestApp: INestApplication): INestApplication => {
-    const options = new DocumentBuilder()
-        .setTitle('Search Ninja - Authentication API')
-        .setDescription('The Search Ninja Authentication API')
-        .setVersion('1.0')
-        .addBearerAuth()
-        .build();
-    const document = SwaggerModule.createDocument(nestApp, options);
-    SwaggerModule.setup(configGlobalPrefix() + '/' + configSwaggerPath(), nestApp, document);
-    return nestApp;
-};
+const configBasePath = (): string => process.env.BASE_PATH || '<env-var-not-set>';
+const configDomainName = (): string => process.env.DOMAIN_NAME || '<env-var-not-set>';
+
+const prefix = (path: string): string => (path.startsWith('/') ? path : '/' + path);
+const remove = (path: string): string => (path.endsWith('/') ? path.substring(0, path.length - 1) : path);
+
+const globalPath = (): string => prefix(remove(configBasePath()));
 
 const bootstrapServer = async (): Promise<Server> => {
     return new Promise<Server>((resolve, reject) => {
@@ -50,10 +45,16 @@ const bootstrapServer = async (): Promise<Server> => {
             logger: logLevel.split(' ') as LogLevel[],
         })
             .then((nestApp) => {
-                nestApp.setGlobalPrefix(configGlobalPrefix());
+                nestApp.setGlobalPrefix(globalPath());
+                nestApp.enableCors();
                 nestApp.use(eventContext());
+
+                // TODO: Security Checks e.g. helmet, csrf, ...
+
                 nestApp.useGlobalPipes(new ValidationPipe());
-                setupSwagger(nestApp);
+
+                generateOpenAPIDocument(nestApp);
+
                 nestApp.init();
             })
             .then(() => {
@@ -64,23 +65,25 @@ const bootstrapServer = async (): Promise<Server> => {
     });
 };
 
-const rewriteSwaggerUrls = (event: APIGatewayEvent): APIGatewayEvent => {
-    const globalPrefix = configGlobalPrefix();
-    const swaggerPath = configSwaggerPath();
-
-    if (event.path === '/' + globalPrefix + '/' + swaggerPath) {
-        event.path = '/' + globalPrefix + '/' + swaggerPath + '/';
+const redirectIfNecessary = (event: APIGatewayEvent): APIGatewayProxyResult | undefined => {
+    if (isAPIGateway(event)) {
+        return {
+            statusCode: 301,
+            body: '',
+            headers: {
+                Location: 'https://' + configDomainName() + '/' + configBasePath() + event.path,
+            },
+        };
     }
-
-    if (event.path.includes('swagger-ui') && !event.path.startsWith(`/${globalPrefix}/${swaggerPath}/`)) {
-        event.path = `/${globalPrefix}/${swaggerPath}/${event.path.substring((globalPrefix + '/').length)}`;
-    }
-
-    return event;
 };
 
 export const handler: Handler = async (event: APIGatewayEvent, context: Context) => {
-    event = rewriteSwaggerUrls(event);
+    console.log('Event:', event.headers.Host, event.path);
+
+    const response = redirectIfNecessary(event);
+    if (response) return response;
+
     cachedServer = await bootstrapServer();
+
     return proxy(cachedServer, event, context, 'PROMISE').promise;
 };

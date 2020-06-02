@@ -10,14 +10,16 @@ export const Search: React.FC = () => {
     useEffect(() => {
         if (!pets && isAuthenticated) {
             getTokenSilently()
-                .then((accessToken) =>
-                    fetch('https://jqpuqrn3nf.execute-api.us-east-1.amazonaws.com/Test/pets', {
+                .then((accessToken) => {
+                    return fetch('https://api-dev.search-ninja.io/auth-v1/user/change-password', {
                         method: 'GET',
+                        mode: 'cors',
+                        credentials: 'include',
                         headers: {
                             Authorization: 'Bearer ' + accessToken,
                         },
-                    }),
-                )
+                    });
+                })
                 .then((result) => result.json())
                 .then((data) => setPets(data))
                 .catch((err) => actions.setError(err));

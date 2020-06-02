@@ -13,15 +13,21 @@ plugins:
 
 provider:
     name: aws
-    stage: ${env:STAGE}
+    #    stage: ${env:STAGE}
     cfnRole: ${env:CFN_ROLE}
     runtime: nodejs12.x
     profile: ${env:AWS_PROFILE}
     stackName: search-ninja-backend-auth-${env:STAGE}
     deploymentBucket:
         name: search-ninja-backend-auth-deployment-bucket-${env:STAGE}
+    logs:
+        httpApi: true
     httpApi:
         name: search-ninja-backend-auth-${env:STAGE}
+        cors:
+            allowedOrigins:
+                - http://localhost:3000
+            allowCredentials: true
         authorizers:
             search-ninja-authorizer:
                 identitySource: $request.header.Authorization
@@ -34,6 +40,8 @@ custom:
     serverless-offline:
         noAuth: true
         noPrependStageInUrl: true
+        httpPort: 4000
+        lambdaPort: 4002
     remover:
         buckets:
             - ${self:provider.deploymentBucket.name}
@@ -42,7 +50,7 @@ custom:
         endpointType: regional
         domainName: ${env:DOMAIN_NAME}
         certificateName: ${env:CERTIFICATE_NAME}
-        basePath: ''
+        basePath: ${env:BASE_PATH}
         createRoute53Record: true
 
 functions:
@@ -51,19 +59,41 @@ functions:
         layers:
             - ${cf:search-ninja-backend-nestjs-layer-${env:STAGE}.SearchNinjaBackendNestJSLayer}
         events:
-            - httpApi: 'GET /${env:BASE_PATH}/docs'
-            - httpApi: 'GET /${env:BASE_PATH}/docs/{proxy+}'
-            - httpApi: 'GET /${env:BASE_PATH}/swagger-ui.css'
-            - httpApi: 'GET /${env:BASE_PATH}/swagger-ui-bundle.js'
-            - httpApi: 'GET /${env:BASE_PATH}/swagger-ui-standalone-preset.js'
-            - httpApi: 'GET /${env:BASE_PATH}/swagger-ui-init.js'
+            - httpApi:
+                  method: 'OPTIONS'
+                  path: '/{proxy+}'
+
+            - httpApi: 'GET /api'
+            - httpApi: 'GET /api/{proxy+}'
+            - httpApi: 'GET /health'
+            - httpApi: 'GET /health/{proxy+}'
 
             - httpApi:
-                  method: '*'
-                  path: '/${env:BASE_PATH}/health/{proxy+}'
+                  method: 'GET'
+                  path: '/{proxy+}'
+                  authorizer:
+                      name: search-ninja-authorizer
 
             - httpApi:
-                  method: '*'
-                  path: '/${env:BASE_PATH}/{proxy+}'
+                  method: 'POST'
+                  path: '/{proxy+}'
+                  authorizer:
+                      name: search-ninja-authorizer
+
+            - httpApi:
+                  method: 'PUT'
+                  path: '/{proxy+}'
+                  authorizer:
+                      name: search-ninja-authorizer
+
+            - httpApi:
+                  method: 'PATCH'
+                  path: '/{proxy+}'
+                  authorizer:
+                      name: search-ninja-authorizer
+
+            - httpApi:
+                  method: 'DELETE'
+                  path: '/{proxy+}'
                   authorizer:
                       name: search-ninja-authorizer

@@ -22,12 +22,12 @@ ReactDOM.render(
         <Auth0Provider
             domain={config.Auth0.Domain}
             client_id={config.Auth0.ClientId}
-            responseType="token id_token"
-            audience="https://api.search-ninja.io"
+            responseType={config.Auth0.ResponseType}
+            audience={config.Auth0.Audience}
             redirect_uri={window.location.origin}
             onRedirectCallback={onRedirectCallback}
-            scope="openid profile read:pets"
-            cacheLocation="localstorage"
+            scope={config.Auth0.Scope}
+            cacheLocation={config.Auth0.CacheLocation}
         >
             <App />
         </Auth0Provider>

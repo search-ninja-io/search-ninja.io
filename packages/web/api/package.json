@@ -1,0 +1,24 @@
+{
+    "name": "@search-ninja-web/api",
+    "version": "1.0.0",
+    "license": "MIT",
+    "engines": {
+        "node": "12"
+    },
+    "scripts": {
+        "clean": "rimraf dist",
+        "lint": "eslint . --ignore-path ../../../.eslintignore --ext .ts,.tsx,.js,.jsx",
+        "prettier": "prettier . --ignore-path ../../../.prettierignore --write",
+        "start": "webpack-dev-server --mode development --history-api-fallback --env.CONFIG_FILE=../config/config.localhost.json",
+        "build:dev": "webpack --mode development --env.CONFIG_FILE=../config/config.development.json",
+        "build:prod": "webpack --mode production --env.CONFIG_FILE=../config/config.production.json"
+    },
+    "dependencies": {
+        "react-markdown": "^4.3.1",
+        "react-sidebar": "^3.0.2",
+        "swagger-ui": "^3.25.4"
+    },
+    "devDependencies": {
+        "@types/react-sidebar": "^3.0.0"
+    }
+}

@@ -2,12 +2,20 @@
     "name": "@search-ninja-web/frontend",
     "version": "1.0.0",
     "license": "MIT",
+    "engines": {
+        "node": "12"
+    },
     "scripts": {
         "clean": "rimraf dist",
         "lint": "eslint . --ignore-path ../../../.eslintignore --ext .ts,.tsx,.js,.jsx",
         "prettier": "prettier . --ignore-path ../../../.prettierignore --write",
-        "build": "webpack --mode development",
-        "start": "webpack-dev-server --mode development --history-api-fallback"
+        "start": "webpack-dev-server --config ../../../.webpack.web.config.js --mode development",
+        "type-check": "tsc --noEmit",
+        "type-check:watch": "yarn type-check -- --watch",
+        "build": "yarn build:types && yarn build:js",
+        "build:types": "tsc --emitDeclarationOnly",
+        "build:js": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline --config-file ../../../.babelrc.json",
+        "bundle": "webpack --config ../../../.webpack.web.config.js --mode development"
     },
     "dependencies": {
         "@auth0/auth0-spa-js": "^1.7.0",

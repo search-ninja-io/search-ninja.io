@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useState, useEffect, useContext } from 'react';
-import createAuth0Client, {
+import {
     PopupLoginOptions,
     RedirectLoginOptions,
     RedirectLoginResult,
@@ -54,8 +54,13 @@ export const Auth0Provider = ({
 
     useEffect(() => {
         const initAuth0 = async (): Promise<void> => {
-            const auth0FromHook = await createAuth0Client(initOptions);
+            const auth0FromHook = new Auth0Client(initOptions);
             setAuth0Client(auth0FromHook);
+
+            await auth0FromHook
+                .getTokenSilently(initOptions)
+                .then(() => console.log('Automatically logged in'))
+                .catch((err) => console.log('Not logged in. Reason:', err.error_description));
 
             if (window.location.search.includes('code=')) {
                 let result: RedirectLoginResult = {};
