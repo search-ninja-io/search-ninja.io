@@ -98,5 +98,9 @@
         "!Split",
         "!Join sequence"
     ],
-    "yaml.format.enable": true
+    "yaml.format.enable": true,
+
+    "files.associations": {
+        "*.svelte": "html"
+    }
 }

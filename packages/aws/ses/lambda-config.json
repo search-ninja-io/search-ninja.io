@@ -1,0 +1,11 @@
+{
+    "Region": "[Region]",
+    "MailS3Bucket": "[S3 Bucket]",
+    "MailS3Prefix": "[S3 Bucket Object Path Prefix]",
+    "MailSender": "[SES Sender Email]",
+    "MailDefaultRecipient": ["[Recipient Email Address A]"],
+    "Inbox": {
+        "[Inbox A]": { "MailRecipients": ["[Recipient Email Address B]"] },
+        "[Inbox B]": { "MailRecipients": ["[Recipient Email Address C]"] }
+    }
+}
