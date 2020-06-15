@@ -1,6 +1,17 @@
-node_modules
-dist
+# general files
+.DS_Store
+yarn-error.log
+
+# config files
 .env*
 config.*.json
+
+# build directories
 .serverless
 .build
+dist
+__sapper__
+
+# installable dependencies
+vendor
+node_modules
